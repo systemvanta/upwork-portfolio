@@ -23,7 +23,7 @@ export function LoginForm() {
         });
         setPending(false);
         if (result) {
-          setError(result.message ?? "Could not log in");
+          setError(result.message || result.statusText || "Could not log in");
           return;
         }
         router.push("/projects");
