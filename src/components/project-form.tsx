@@ -1,0 +1,164 @@
+"use client";
+
+import { categoryGroups } from "@/data/categories";
+import { DemoMediaFields } from "@/components/demo-media-fields";
+import { SkillInput } from "@/components/skill-input";
+import { unpublishProject } from "@/app/actions/projects";
+import type { DemoMedia } from "@/lib/media";
+
+type ProjectFormValues = {
+  id?: string;
+  title?: string;
+  tagline?: string;
+  category?: string;
+  skills?: string[];
+  liveUrl?: string | null;
+  media?: DemoMedia[];
+  outcome?: string;
+  problem?: string;
+  constraints?: string;
+  decision?: string;
+  tradeoff?: string;
+  method?: string;
+  writeup?: string;
+  status?: string;
+};
+
+export function ProjectForm({
+  action,
+  project,
+}: {
+  action: (formData: FormData) => Promise<void>;
+  project?: ProjectFormValues;
+}) {
+  return (
+    <form action={action} className="space-y-6">
+      <Field label="Title" name="title" required defaultValue={project?.title} />
+      <Field
+        label="Tagline"
+        name="tagline"
+        required
+        defaultValue={project?.tagline}
+      />
+      <label className="block">
+        <span className="kicker">Category</span>
+        <select
+          name="category"
+          required
+          defaultValue={project?.category ?? "shopify"}
+          className="field"
+        >
+          {categoryGroups().map(({ group, items }) => (
+            <optgroup key={group} label={group}>
+              {items.map((category) => (
+                <option key={category.slug} value={category.slug}>
+                  {category.label}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      </label>
+      <label className="block">
+        <span className="kicker">Skills</span>
+        <div className="mt-2">
+          <SkillInput defaultValue={project?.skills ?? []} />
+        </div>
+      </label>
+      <Field label="Live URL" name="liveUrl" defaultValue={project?.liveUrl ?? ""} />
+      <DemoMediaFields existing={project?.media ?? []} />
+      <Field label="Outcome" name="outcome" defaultValue={project?.outcome} />
+      <Area label="Problem" name="problem" required defaultValue={project?.problem} />
+      <Area
+        label="Constraints"
+        name="constraints"
+        required
+        defaultValue={project?.constraints}
+      />
+      <Area label="Decision" name="decision" required defaultValue={project?.decision} />
+      <Area label="Tradeoff" name="tradeoff" required defaultValue={project?.tradeoff} />
+      <Area
+        label="How it was measured"
+        name="method"
+        defaultValue={project?.method}
+      />
+      <Area label="Write-up" name="writeup" defaultValue={project?.writeup} rows={6} />
+      <label className="block">
+        <span className="kicker">Status</span>
+        <select
+          name="status"
+          defaultValue={project?.status ?? "published"}
+          className="field"
+        >
+          <option value="published">Published</option>
+          <option value="wip">WIP</option>
+        </select>
+      </label>
+      <div className="flex flex-wrap gap-3">
+        <button type="submit" className="btn btn-primary">
+          {project?.id ? "Save project" : "Register project"}
+        </button>
+        {project?.id ? (
+          <button
+            type="submit"
+            formAction={unpublishProject.bind(null, project.id)}
+            className="btn btn-ghost"
+          >
+            Unpublish
+          </button>
+        ) : null}
+      </div>
+    </form>
+  );
+}
+
+function Field({
+  label,
+  name,
+  defaultValue,
+  required,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="kicker">{label}</span>
+      <input
+        name={name}
+        required={required}
+        defaultValue={defaultValue}
+        className="field"
+      />
+    </label>
+  );
+}
+
+function Area({
+  label,
+  name,
+  defaultValue,
+  required,
+  rows = 4,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string;
+  required?: boolean;
+  rows?: number;
+}) {
+  return (
+    <label className="block">
+      <span className="kicker">{label}</span>
+      <textarea
+        name={name}
+        required={required}
+        defaultValue={defaultValue}
+        rows={rows}
+        className="field resize-y"
+      />
+    </label>
+  );
+}
