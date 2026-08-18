@@ -75,11 +75,16 @@ const baseURL =
 
 export const auth = betterAuth({
   baseURL,
+  basePath: "/api/auth",
   trustedOrigins,
   database: prismaAdapter(prisma, { provider: "sqlite" }),
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,
+  },
+  advanced: {
+    skipTrailingSlashes: true,
+    trustedProxyHeaders: true,
   },
   plugins: [nextCookies()],
 });
