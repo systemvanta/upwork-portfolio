@@ -23,6 +23,8 @@ function trustedOrigins() {
         originFromHost(process.env.VERCEL_PROJECT_PRODUCTION_URL),
         originFromHost(process.env.VERCEL_URL),
         ...extra,
+        "https://nicholasworkds.dev",
+        "https://www.nicholasworkds.dev",
         "https://upwork-portfolio-three.vercel.app",
         "https://*.vercel.app",
         "http://localhost:3000",
