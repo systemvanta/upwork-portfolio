@@ -1,4 +1,3 @@
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { PrismaClient } from "../generated/prisma/client";
 
@@ -17,7 +16,10 @@ export function resolveTurso(force = false) {
   }
   if (
     process.env.TURSO_DATABASE_URL &&
-    (force || process.env.NODE_ENV === "production" || process.env.USE_TURSO === "1")
+    (force ||
+      process.env.VERCEL ||
+      process.env.NODE_ENV === "production" ||
+      process.env.USE_TURSO === "1")
   ) {
     return {
       url: process.env.TURSO_DATABASE_URL,
@@ -32,6 +34,12 @@ export function createPrismaClient(options?: { turso?: boolean }) {
   if (turso) {
     return new PrismaClient({ adapter: new PrismaLibSql(turso) });
   }
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN (or a libsql DATABASE_URL) on Vercel.",
+    );
+  }
+  const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3") as typeof import("@prisma/adapter-better-sqlite3");
   const url = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
   return new PrismaClient({ adapter: new PrismaBetterSqlite3({ url }) });
 }

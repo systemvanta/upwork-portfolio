@@ -17,17 +17,25 @@ export function LoginForm() {
         setPending(true);
         setError("");
         const form = new FormData(event.currentTarget);
-        const { error: result } = await authClient.signIn.email({
-          email: String(form.get("email") ?? ""),
-          password: String(form.get("password") ?? ""),
-        });
-        setPending(false);
-        if (result) {
-          setError(result.message || result.statusText || "Could not log in");
-          return;
+        try {
+          const { error: result } = await authClient.signIn.email({
+            email: String(form.get("email") ?? ""),
+            password: String(form.get("password") ?? ""),
+          });
+          if (result) {
+            const detail = [result.status, result.message || result.statusText]
+              .filter(Boolean)
+              .join(" ");
+            setError(detail || "Could not log in");
+            return;
+          }
+          router.push("/projects");
+          router.refresh();
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Could not log in");
+        } finally {
+          setPending(false);
         }
-        router.push("/projects");
-        router.refresh();
       }}
     >
       <label className="block">
