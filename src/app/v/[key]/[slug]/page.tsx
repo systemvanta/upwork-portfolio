@@ -5,6 +5,7 @@ import { ClientHeader } from "@/components/client-header";
 import { DemoGallery } from "@/components/demo-gallery";
 import { categoryLabel } from "@/data/categories";
 import { demosForProject } from "@/lib/media";
+import { getProjectBySlug } from "@/lib/projects";
 import { getShareLink, projectsForShare } from "@/lib/share";
 import { displayOutcome, stripSourceCopy } from "@/lib/source-copy";
 
@@ -16,8 +17,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { key, slug } = await params;
   const share = await getShareLink(key);
   if (!share) return { title: "Portfolio" };
-  const projects = await projectsForShare(share);
-  const project = projects.find((item) => item.slug === slug);
+  const listed = await projectsForShare(share);
+  if (!listed.some((item) => item.slug === slug)) return { title: "Portfolio" };
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: "Portfolio" };
   return { title: project.title, description: project.tagline };
 }
@@ -27,11 +29,12 @@ export default async function ClientProjectPage({ params }: PageProps) {
   const share = await getShareLink(key);
   if (!share) notFound();
 
-  const projects = await projectsForShare(share);
-  const project = projects.find((item) => item.slug === slug);
+  const listed = await projectsForShare(share);
+  if (!listed.some((item) => item.slug === slug)) notFound();
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const others = projects.filter((item) => item.slug !== project.slug);
+  const others = listed.filter((item) => item.slug !== project.slug);
 
   return (
     <>

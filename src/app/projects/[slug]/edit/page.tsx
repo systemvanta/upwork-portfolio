@@ -4,7 +4,7 @@ import { updateProject } from "@/app/actions/projects";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { ProjectForm } from "@/components/project-form";
-import { getProjectBySlug, getPublishedProjects } from "@/lib/projects";
+import { getProjectBySlug, getPublishedCount } from "@/lib/projects";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Edit project" };
@@ -21,12 +21,12 @@ export default async function EditProjectPage({
   const project = await getProjectBySlug(slug);
   if (!project || project.ownerId !== session.user.id) notFound();
 
-  const published = await getPublishedProjects();
+  const count = await getPublishedCount();
   const action = updateProject.bind(null, project.id);
 
   return (
     <>
-      <Header count={published.length} />
+      <Header count={count} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
         <p className="kicker">Edit</p>
         <h1 className="mt-2 text-[34px] font-semibold tracking-tight">{project.title}</h1>

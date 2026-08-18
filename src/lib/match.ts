@@ -4,7 +4,12 @@ import { groq } from "@ai-sdk/groq";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { normalizeSkills } from "@/data/skill-aliases";
-import { getPublishedProjects, type ProjectWithSkills } from "@/lib/projects";
+import {
+  getProjectsBySlugs,
+  getPublishedCatalog,
+  type CatalogProject,
+  type ProjectCardData,
+} from "@/lib/projects";
 
 const relatedSkills: Record<string, string[]> = {
   ai: ["ai", "ai-automation", "ai-agents", "openai", "langchain", "voiceflow"],
@@ -19,7 +24,7 @@ const relatedSkills: Record<string, string[]> = {
   spring: ["spring", "java"],
 };
 
-function catalogHash(projects: ProjectWithSkills[]) {
+function catalogHash(projects: CatalogProject[]) {
   const raw = projects
     .map((project) => `${project.id}:${project.updatedAt.toISOString()}`)
     .sort()
@@ -31,7 +36,7 @@ function skillKey(skills: string[]) {
   return normalizeSkills(skills).join(",");
 }
 
-function projectSkillSet(project: ProjectWithSkills) {
+function projectSkillSet(project: CatalogProject) {
   return new Set(
     normalizeSkills([
       project.category,
@@ -48,7 +53,7 @@ function expandRequested(requested: string[]) {
   );
 }
 
-function orMatch(projects: ProjectWithSkills[], requested: string[]) {
+function orMatch(projects: CatalogProject[], requested: string[]) {
   const needed = expandRequested(requested);
   if (needed.size === 0) return [];
   return projects.filter((project) => {
@@ -57,13 +62,7 @@ function orMatch(projects: ProjectWithSkills[], requested: string[]) {
   });
 }
 
-export async function matchProjectsBySkills(rawSkills: string[]) {
-  const requested = normalizeSkills(rawSkills);
-  if (requested.length === 0) return [];
-  return orMatch(await getPublishedProjects(), requested);
-}
-
-function compactCatalog(projects: ProjectWithSkills[]) {
+function compactCatalog(projects: CatalogProject[]) {
   return projects.map((project) => ({
     slug: project.slug,
     title: project.title,
@@ -73,7 +72,7 @@ function compactCatalog(projects: ProjectWithSkills[]) {
 }
 
 async function groqPick(
-  candidates: ProjectWithSkills[],
+  candidates: CatalogProject[],
   requested: string[],
   limit: number,
 ) {
@@ -95,51 +94,41 @@ ${JSON.stringify(compactCatalog(sample))}`,
   });
 
   const allowed = new Set(sample.map((project) => project.slug));
-  const slugs = result.object.slugs.filter((slug) => allowed.has(slug));
-  const picked = slugs
-    .map((slug) => sample.find((project) => project.slug === slug))
-    .filter((project): project is ProjectWithSkills => Boolean(project));
-  return picked.slice(0, limit);
+  return result.object.slugs.filter((slug) => allowed.has(slug)).slice(0, limit);
 }
 
 export async function matchProjects(rawSkills: string[], limit?: number) {
   const requested = normalizeSkills(rawSkills);
-  const published = await getPublishedProjects();
-  if (requested.length === 0) return { projects: [], source: "empty" as const };
+  if (requested.length === 0) return { projects: [] as ProjectCardData[], source: "empty" as const };
 
+  const catalog = await getPublishedCatalog();
   const cap = limit && limit > 0 ? limit : undefined;
   const key = `${skillKey(requested)}|${cap ?? "all"}`;
-  const hash = catalogHash(published);
+  const hash = catalogHash(catalog);
   const cached = await prisma.matchCache.findUnique({ where: { skillKey: key } });
   if (cached && cached.catalogHash === hash) {
     const slugs = JSON.parse(cached.slugsJson) as string[];
-    const bySlug = new Map(published.map((project) => [project.slug, project]));
-    const projects = slugs
-      .map((slug) => bySlug.get(slug))
-      .filter((project): project is ProjectWithSkills => Boolean(project));
+    const projects = await getProjectsBySlugs(cap ? slugs.slice(0, cap) : slugs);
     if (projects.length > 0) {
-      return {
-        projects: cap ? projects.slice(0, cap) : projects,
-        source: "cache" as const,
-      };
+      return { projects, source: "cache" as const };
     }
   }
 
-  const matched = orMatch(published, requested);
-  let projects = matched;
+  const matched = orMatch(catalog, requested);
+  let slugs = matched.map((project) => project.slug);
   let source: "groq" | "or" = "or";
 
   if (cap) {
     try {
       const picked = await groqPick(matched, requested, cap);
       if (picked.length > 0) {
-        projects = picked;
+        slugs = picked;
         source = "groq";
       } else {
-        projects = matched.slice(0, cap);
+        slugs = slugs.slice(0, cap);
       }
     } catch {
-      projects = matched.slice(0, cap);
+      slugs = slugs.slice(0, cap);
     }
   }
 
@@ -148,16 +137,16 @@ export async function matchProjects(rawSkills: string[], limit?: number) {
     create: {
       skillKey: key,
       catalogHash: hash,
-      slugsJson: JSON.stringify(projects.map((project) => project.slug)),
+      slugsJson: JSON.stringify(slugs),
     },
     update: {
       catalogHash: hash,
-      slugsJson: JSON.stringify(projects.map((project) => project.slug)),
+      slugsJson: JSON.stringify(slugs),
       createdAt: new Date(),
     },
   });
 
-  return { projects, source };
+  return { projects: await getProjectsBySlugs(slugs), source };
 }
 
 export function parseSkillQuery(value?: string | string[]) {

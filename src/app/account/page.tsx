@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { AccountForms } from "@/components/account-form";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { getPublishedProjects } from "@/lib/projects";
+import { getPublishedCount } from "@/lib/projects";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Account" };
@@ -21,7 +21,7 @@ export default async function AccountPage({
   const session = await getSession();
   if (!session?.user) redirect("/");
 
-  const published = await getPublishedProjects();
+  const count = await getPublishedCount();
   const params = await searchParams;
   const notice =
     params.email === "ok"
@@ -34,7 +34,7 @@ export default async function AccountPage({
 
   return (
     <>
-      <Header count={published.length} />
+      <Header count={count} />
       <main className="mx-auto w-full max-w-lg flex-1 px-6 py-12">
         <p className="kicker">Account</p>
         <h1 className="mt-2 text-[40px] font-semibold tracking-tight">

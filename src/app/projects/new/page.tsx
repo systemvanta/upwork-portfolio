@@ -4,7 +4,7 @@ import { createProject } from "@/app/actions/projects";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { ProjectForm } from "@/components/project-form";
-import { getPublishedProjects } from "@/lib/projects";
+import { getPublishedCount } from "@/lib/projects";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Register project" };
@@ -12,11 +12,11 @@ export const metadata: Metadata = { title: "Register project" };
 export default async function NewProjectPage() {
   const session = await getSession();
   if (!session?.user) redirect("/login");
-  const published = await getPublishedProjects();
+  const count = await getPublishedCount();
 
   return (
     <>
-      <Header count={published.length} />
+      <Header count={count} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
         <p className="kicker">Register</p>
         <h1 className="mt-2 text-[40px] font-semibold leading-none tracking-tight sm:text-[48px]">

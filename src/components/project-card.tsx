@@ -2,13 +2,13 @@ import Link from "next/link";
 import { DemoThumb } from "@/components/demo-gallery";
 import { categoryLabel } from "@/data/categories";
 import { demosForProject } from "@/lib/media";
-import type { ProjectWithSkills } from "@/lib/projects";
+import type { ProjectCardData } from "@/lib/projects";
 
 export function ProjectCard({
   project,
   href,
 }: {
-  project: ProjectWithSkills;
+  project: ProjectCardData;
   href?: string;
 }) {
   const media = demosForProject(project);

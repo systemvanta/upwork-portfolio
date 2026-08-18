@@ -2,10 +2,10 @@ import { CategoryChips } from "@/components/category-chips";
 import { EmptyState } from "@/components/empty-state";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { ProjectCard } from "@/components/project-card";
+import { ProjectGrid } from "@/components/project-grid";
 import { site } from "@/data/site";
 import { isCategorySlug } from "@/data/categories";
-import { filterByCategory, getPublishedProjects } from "@/lib/projects";
+import { getPublishedCount, listPublishedProjects } from "@/lib/projects";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
@@ -18,17 +18,25 @@ export default async function ProjectsPage({
   const session = await getSession();
   if (!session?.user) redirect("/");
   const category = rawCategory && isCategorySlug(rawCategory) ? rawCategory : undefined;
-  let published: Awaited<ReturnType<typeof getPublishedProjects>> = [];
+
+  let count = 0;
+  let projects: Awaited<ReturnType<typeof listPublishedProjects>>["projects"] = [];
+  let nextCursor: string | null = null;
   try {
-    published = await getPublishedProjects();
+    const [total, page] = await Promise.all([
+      getPublishedCount(),
+      listPublishedProjects({ category }),
+    ]);
+    count = total;
+    projects = page.projects;
+    nextCursor = page.nextCursor;
   } catch {
-    published = [];
+    count = 0;
   }
-  const projects = filterByCategory(published, category);
 
   return (
     <>
-      <Header count={published.length} />
+      <Header count={count} />
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
         <p className="kicker">Registry</p>
         <h1 className="mt-2 text-[40px] font-semibold leading-none tracking-tight text-ink sm:text-[56px]">
@@ -53,11 +61,12 @@ export default async function ProjectsPage({
             }
           />
         ) : (
-          <ol className="mt-8 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </ol>
+          <ProjectGrid
+            key={category ?? "all"}
+            initial={projects}
+            nextCursor={nextCursor}
+            category={category}
+          />
         )}
       </main>
       <Footer />

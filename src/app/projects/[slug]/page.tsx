@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { categoryLabel } from "@/data/categories";
 import { demosForProject } from "@/lib/media";
-import { getProjectBySlug, getPublishedProjects } from "@/lib/projects";
+import { getProjectBySlug, getPublishedCount, getRelatedProjectTitles } from "@/lib/projects";
 import { getSession } from "@/lib/session";
 import { displayOutcome, stripSourceCopy } from "@/lib/source-copy";
 
@@ -29,12 +29,14 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!project) notFound();
   if (project.status !== "published" && !isOwner) notFound();
 
-  const published = await getPublishedProjects();
-  const others = published.filter((item) => item.slug !== project.slug);
+  const [count, others] = await Promise.all([
+    getPublishedCount(),
+    getRelatedProjectTitles(project.slug),
+  ]);
 
   return (
     <>
-      <Header count={published.length} />
+      <Header count={count} />
       <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
         <p className="kicker">
           {categoryLabel(project.category)}
