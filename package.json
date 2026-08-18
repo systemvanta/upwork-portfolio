@@ -10,11 +10,14 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "db:turso": "tsx scripts/push-to-turso.ts",
     "media:migrate": "tsx scripts/migrate-media-to-blob.ts"
   },
   "dependencies": {
     "@ai-sdk/groq": "^4.0.28",
+    "@libsql/client": "^0.17.4",
     "@prisma/adapter-better-sqlite3": "^7.9.1",
+    "@prisma/adapter-libsql": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "@vercel/blob": "^2.8.0",
     "ai": "^7.0.66",

@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { randomUUID } from "crypto";
 import { hashPassword } from "better-auth/crypto";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { createPrismaClient } from "../src/lib/create-prisma";
+import type { PrismaClient } from "../src/generated/prisma/client";
 
 const extraUsers: { name: string; email: string; password: string }[] = [
   // { name: "Teammate", email: "dev@example.com", password: "changeme123" },
@@ -53,10 +53,7 @@ async function main() {
     throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD are required in .env");
   }
 
-  const url = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
-  const prisma = new PrismaClient({
-    adapter: new PrismaBetterSqlite3({ url }),
-  });
+  const prisma = createPrismaClient();
 
   try {
     await upsertUser(prisma, { name: "Admin", email, password });
