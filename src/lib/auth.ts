@@ -5,9 +5,19 @@ import { prisma } from "@/lib/prisma";
 
 function originFromHost(host?: string | null) {
   if (!host) return "";
-  const trimmed = host.replace(/\/$/, "");
-  if (!trimmed) return "";
-  return trimmed.startsWith("http") ? trimmed : `https://${trimmed}`;
+  for (const part of host.split(",")) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    try {
+      const url = new URL(trimmed.startsWith("http") ? trimmed : `https://${trimmed}`);
+      const hostname = url.hostname.replace(/nicholasworkds\.dev$/i, "nicholasworks.dev");
+      if (!hostname || hostname.includes(",")) continue;
+      return `${url.protocol}//${hostname}${url.port ? `:${url.port}` : ""}`;
+    } catch {
+      continue;
+    }
+  }
+  return "";
 }
 
 function hostnameAllowed(hostname: string) {
@@ -70,6 +80,7 @@ async function trustedOrigins(request?: Request) {
 const baseURL =
   originFromHost(process.env.BETTER_AUTH_URL) ||
   originFromHost(process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
+  (process.env.VERCEL ? "https://nicholasworks.dev" : "") ||
   originFromHost(process.env.VERCEL_URL) ||
   "http://localhost:3000";
 
