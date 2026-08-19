@@ -95,14 +95,14 @@ function jsonLdBlocks(html: string) {
   );
 }
 
-function findCreativeWork(html: string) {
+type JsonLd = Record<string, unknown>;
+
+function findCreativeWork(html: string): JsonLd | null {
   for (const raw of jsonLdBlocks(html)) {
     try {
-      const data = JSON.parse(raw) as {
-        "@graph"?: Record<string, unknown>[];
-        "@type"?: string;
-      };
-      const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
+      const data = JSON.parse(raw) as JsonLd;
+      const graph = data["@graph"];
+      const nodes = Array.isArray(graph) ? (graph as JsonLd[]) : [data];
       const work = nodes.find((node) => node["@type"] === "CreativeWork");
       if (work) return work;
     } catch {
@@ -110,6 +110,11 @@ function findCreativeWork(html: string) {
     }
   }
   return null;
+}
+
+function jsonText(work: JsonLd | null, key: string) {
+  const value = work?.[key];
+  return typeof value === "string" ? value : "";
 }
 
 function og(html: string, property: string) {
@@ -170,14 +175,14 @@ function skillsFrom(example: {
 
 function parseProject(html: string, pageUrl: string): Example | null {
   const work = findCreativeWork(html);
-  const title = String(work?.name ?? og(html, "og:title")).replace(/\s*\|\s*Made with Lovable$/i, "").trim();
-  let liveUrl = String(work?.url ?? "").trim();
+  const title = String(jsonText(work, "name") || og(html, "og:title")).replace(/\s*\|\s*Made with Lovable$/i, "").trim();
+  let liveUrl = jsonText(work, "url").trim();
   if (liveUrl.startsWith("http://")) liveUrl = `https://${liveUrl.slice("http://".length)}`;
-  const imageUrl = String(work?.image ?? og(html, "og:image")).trim();
+  const imageUrl = String(jsonText(work, "image") || og(html, "og:image")).trim();
   const description = decode(
-    String(work?.description ?? work?.abstract ?? og(html, "og:description") ?? ""),
+    jsonText(work, "description") || jsonText(work, "abstract") || og(html, "og:description"),
   );
-  const tagline = clip(decode(String(work?.abstract ?? description)), 180);
+  const tagline = clip(decode(jsonText(work, "abstract") || description), 180);
   if (!title || !liveUrl || !/^https?:\/\//i.test(liveUrl) || !imageUrl) return null;
   if (/madewithlovable\.com/i.test(liveUrl)) return null;
 
@@ -187,7 +192,7 @@ function parseProject(html: string, pageUrl: string): Example | null {
     description ||
     `${title} needed a working product surface without a long custom frontend build.`;
   const stack = stackFrom(text);
-  const keywords = String(work?.keywords ?? "");
+  const keywords = jsonText(work, "keywords");
 
   return {
     title,
