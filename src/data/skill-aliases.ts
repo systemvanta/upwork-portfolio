@@ -26,6 +26,13 @@ const aliases: Record<string, string> = {
   "rest-api": "api",
   apis: "api",
   "web api": "api",
+  "api integration": "api-integration",
+  "api integrations": "api-integration",
+  "api-integrations": "api-integration",
+  chatbot: "chatbot",
+  "chat bot": "chatbot",
+  chatbots: "chatbot",
+  webhooks: "webhook",
 };
 
 export function normalizeSkill(raw: string) {

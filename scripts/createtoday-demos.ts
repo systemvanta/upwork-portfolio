@@ -129,8 +129,14 @@ export async function downloadDemoImage(imageUrl: string) {
 }
 
 function imageCandidates(imageUrl: string) {
-  const urls = [imageUrl];
-  const archived = imageUrl.match(
+  const decoded = imageUrl.replace(/&amp;/g, "&");
+  const urls = [decoded];
+  const zapierHost = decoded.replace(
+    "https://templates.vercel.zapier.com/api/templates/v1/media/file/",
+    "https://zapier.com/api/templates/v1/media/file/",
+  );
+  if (zapierHost !== decoded) urls.unshift(zapierHost);
+  const archived = decoded.match(
     /https?:\/\/web\.archive\.org\/web\/\d+(?:im_)?\/(https?:\/\/.*)/,
   );
   if (archived?.[1] && !urls.includes(archived[1])) urls.push(archived[1]);
@@ -165,6 +171,17 @@ async function tryDownloadDemoImage(imageUrl: string) {
     imageUrl.includes("madewith-app-prod-bucket")
   ) {
     headers.referer = "https://madewithlovable.com/";
+  } else if (imageUrl.includes("voiceflow.com")) {
+    headers.referer = "https://www.voiceflow.com/customer-stories";
+  } else if (imageUrl.includes("botpress.com") || imageUrl.includes("website-files.com")) {
+    headers.referer = imageUrl.includes("5e42772e6a8cfd42a9715206")
+      ? "https://landbot.io/case-studies"
+      : "https://botpress.com/customers";
+  } else if (
+    imageUrl.includes("zapier.com") ||
+    imageUrl.includes("templates.vercel.zapier.com")
+  ) {
+    headers.referer = "https://zapier.com/templates/chatbot";
   }
 
   try {
@@ -198,5 +215,6 @@ function extFromType(type: string, url: string) {
   if (url.includes(".webp")) return "webp";
   if (url.includes(".png")) return "png";
   if (url.includes(".jpg") || url.includes(".jpeg")) return "jpg";
+  if (url.includes(".avif")) return "avif";
   return null;
 }
