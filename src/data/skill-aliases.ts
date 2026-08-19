@@ -26,18 +26,6 @@ const aliases: Record<string, string> = {
   "rest-api": "api",
   apis: "api",
   "web api": "api",
-  "microsoft azure": "azure",
-  "azure devops": "azure",
-  "ci/cd": "ci-cd",
-  cicd: "ci-cd",
-  "continuous integration": "ci-cd",
-  "continuous delivery": "ci-cd",
-  "github actions": "github-actions",
-  "gitlab ci": "gitlab",
-  "google cloud": "gcp",
-  "google cloud platform": "gcp",
-  "amazon eks": "kubernetes",
-  k8s: "kubernetes",
 };
 
 export function normalizeSkill(raw: string) {

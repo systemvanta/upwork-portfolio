@@ -165,18 +165,6 @@ async function tryDownloadDemoImage(imageUrl: string) {
     imageUrl.includes("madewith-app-prod-bucket")
   ) {
     headers.referer = "https://madewithlovable.com/";
-  } else if (
-    imageUrl.includes("awsstatic.com") ||
-    imageUrl.includes("amazonaws.com") ||
-    imageUrl.includes("cloudfront.net")
-  ) {
-    headers.referer = "https://aws.amazon.com/solutions/case-studies/";
-  } else if (
-    imageUrl.includes("about-gitlab-com") ||
-    imageUrl.includes("gitlab.com") ||
-    imageUrl.includes("cloudinary.com")
-  ) {
-    headers.referer = "https://about.gitlab.com/customers/";
   }
 
   try {

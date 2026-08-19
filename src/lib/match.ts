@@ -23,11 +23,6 @@ const relatedSkills: Record<string, string[]> = {
   typescript: ["typescript", "react"],
   api: ["api", "node"],
   lovable: ["lovable", "react", "typescript"],
-  aws: ["aws", "devops", "ci-cd"],
-  azure: ["azure", "devops", "ci-cd"],
-  gcp: ["gcp", "devops"],
-  devops: ["devops", "ci-cd", "aws", "azure"],
-  "ci-cd": ["ci-cd", "devops"],
   java: ["java", "spring"],
   spring: ["spring", "java"],
 };
