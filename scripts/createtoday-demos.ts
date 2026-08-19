@@ -160,6 +160,11 @@ async function tryDownloadDemoImage(imageUrl: string) {
     imageUrl.includes("framerusercontent.com")
   ) {
     headers.referer = "https://www.framer.com/community/gallery/";
+  } else if (
+    imageUrl.includes("madewithlovable.com") ||
+    imageUrl.includes("madewith-app-prod-bucket")
+  ) {
+    headers.referer = "https://madewithlovable.com/";
   }
 
   try {

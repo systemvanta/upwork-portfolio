@@ -21,6 +21,11 @@ const aliases: Record<string, string> = {
   "tailwind css": "tailwind",
   tailwindcss: "tailwind",
   "amazon web services": "aws",
+  "lovable.dev": "lovable",
+  "rest api": "api",
+  "rest-api": "api",
+  apis: "api",
+  "web api": "api",
 };
 
 export function normalizeSkill(raw: string) {

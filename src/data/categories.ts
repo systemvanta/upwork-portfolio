@@ -41,6 +41,7 @@ export const categories = [
   { slug: "salesforce", label: "Salesforce", group: "Business platforms" },
   { slug: "hubspot", label: "HubSpot", group: "Business platforms" },
   { slug: "bubble", label: "Bubble", group: "No-code" },
+  { slug: "lovable", label: "Lovable", group: "No-code" },
   { slug: "photography", label: "Photography", group: "Portfolio" },
   { slug: "product-design", label: "Product design", group: "Portfolio" },
   { slug: "brand-design", label: "Brand design", group: "Portfolio" },

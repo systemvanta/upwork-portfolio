@@ -18,8 +18,11 @@ const relatedSkills: Record<string, string[]> = {
   openai: ["openai", "ai", "ai-agents"],
   langchain: ["langchain", "ai-agents"],
   voiceflow: ["voiceflow", "ai-agents"],
-  react: ["react", "nextjs", "react-native"],
+  react: ["react", "nextjs", "react-native", "lovable"],
   nextjs: ["nextjs", "react"],
+  typescript: ["typescript", "react"],
+  api: ["api", "node"],
+  lovable: ["lovable", "react", "typescript"],
   java: ["java", "spring"],
   spring: ["spring", "java"],
 };
