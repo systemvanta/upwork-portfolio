@@ -15,7 +15,7 @@ export default async function EditProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const session = await getSession();
-  if (!session?.user) redirect("/login");
+  if (!session?.user) redirect("/");
 
   const { slug } = await params;
   const project = await getProjectBySlug(slug);

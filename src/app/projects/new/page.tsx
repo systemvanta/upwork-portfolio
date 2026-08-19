@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Register project" };
 
 export default async function NewProjectPage() {
   const session = await getSession();
-  if (!session?.user) redirect("/login");
+  if (!session?.user) redirect("/");
   const count = await getPublishedCount();
 
   return (
