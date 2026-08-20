@@ -173,6 +173,11 @@ async function tryDownloadDemoImage(imageUrl: string) {
     headers.referer = "https://madewithlovable.com/";
   } else if (imageUrl.includes("voiceflow.com")) {
     headers.referer = "https://www.voiceflow.com/customer-stories";
+  } else if (
+    imageUrl.includes("68a44d4040f98a4adf2207b6") ||
+    imageUrl.includes("6889473510b50328dbb70ae6")
+  ) {
+    headers.referer = "https://claude.com/customers";
   } else if (imageUrl.includes("botpress.com") || imageUrl.includes("website-files.com")) {
     headers.referer = imageUrl.includes("5e42772e6a8cfd42a9715206")
       ? "https://landbot.io/case-studies"

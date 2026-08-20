@@ -33,6 +33,16 @@ const aliases: Record<string, string> = {
   "chat bot": "chatbot",
   chatbots: "chatbot",
   webhooks: "webhook",
+  claude: "claude-api",
+  anthropic: "claude-api",
+  "claude api": "claude-api",
+  cowork: "claude-cowork",
+  "claude cowork": "claude-cowork",
+  "prompt engineering": "prompt-engineering",
+  prompting: "prompt-engineering",
+  "process automation": "workflow-automation",
+  "workflow automation": "workflow-automation",
+  rpa: "workflow-automation",
 };
 
 export function normalizeSkill(raw: string) {

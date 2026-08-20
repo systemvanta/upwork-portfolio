@@ -12,10 +12,14 @@ import {
 } from "@/lib/projects";
 
 const relatedSkills: Record<string, string[]> = {
-  ai: ["ai", "ai-automation", "ai-agents", "openai", "langchain", "voiceflow", "chatbot"],
-  "ai-automation": ["ai", "ai-automation", "ai-agents", "openai", "chatbot"],
-  "ai-agents": ["ai", "ai-agents", "openai", "langchain", "voiceflow", "chatbot"],
+  ai: ["ai", "ai-automation", "ai-agents", "openai", "claude-api", "langchain", "voiceflow", "chatbot"],
+  "ai-automation": ["ai", "ai-automation", "ai-agents", "openai", "claude-api", "chatbot", "workflow-automation"],
+  "ai-agents": ["ai", "ai-agents", "openai", "claude-api", "langchain", "voiceflow", "chatbot", "claude-cowork"],
   openai: ["openai", "ai", "ai-agents", "chatbot"],
+  "claude-api": ["claude-api", "ai", "ai-agents", "prompt-engineering", "api"],
+  "claude-cowork": ["claude-cowork", "claude-api", "ai-agents", "workflow-automation", "prompt-engineering"],
+  "prompt-engineering": ["prompt-engineering", "claude-api", "openai", "ai"],
+  "workflow-automation": ["workflow-automation", "ai-automation", "n8n", "zapier", "make", "api-integration"],
   langchain: ["langchain", "ai-agents"],
   voiceflow: ["voiceflow", "ai-agents", "chatbot"],
   chatbot: ["chatbot", "ai-agents", "voiceflow", "openai"],
