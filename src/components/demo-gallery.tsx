@@ -1,31 +1,78 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { embedSrc, isDirectVideo, posterSrc, youtubeId, type DemoMedia } from "@/lib/media";
 
 export function DemoGallery({ media }: { media: DemoMedia[] }) {
-  if (media.length === 0) return null;
+  const [failed, setFailed] = useState<Set<string>>(new Set());
+  const [index, setIndex] = useState<number | null>(null);
+  const items = media.filter((item) => !failed.has(item.id));
+
+  if (media.length === 0 || items.length === 0) return null;
 
   return (
     <section className="mt-10">
       <p className="kicker">Demo</p>
-      <ul className="mt-4 grid gap-3">
-        {media.map((item, index) => (
-          <DemoGalleryItem key={item.id} item={item} delay={index * 90} />
+      <ul className="demo-strip mt-4">
+        {items.map((item, itemIndex) => (
+          <li key={item.id} className="demo-tile rise" style={{ animationDelay: `${itemIndex * 80}ms` }}>
+            <button
+              type="button"
+              className="demo-tile-btn"
+              onClick={() => setIndex(itemIndex)}
+            >
+              <DemoThumbCard
+                item={item}
+                onError={() =>
+                  setFailed((current) => {
+                    const next = new Set(current);
+                    next.add(item.id);
+                    return next;
+                  })
+                }
+              />
+              {item.kind === "video" ? (
+                <span className="demo-badge">Video</span>
+              ) : null}
+            </button>
+          </li>
         ))}
       </ul>
+      {index !== null ? (
+        <DemoLightbox
+          items={items}
+          index={index}
+          onClose={() => setIndex(null)}
+          onChange={setIndex}
+        />
+      ) : null}
     </section>
   );
 }
 
-function DemoGalleryItem({ item, delay = 0 }: { item: DemoMedia; delay?: number }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return null;
-
+function DemoThumbCard({
+  item,
+  onError,
+}: {
+  item: DemoMedia;
+  onError: () => void;
+}) {
+  const poster = posterSrc(item);
+  if (poster) {
+    return (
+      <DemoImage
+        src={poster}
+        alt=""
+        className="h-full w-full object-cover object-top"
+        onError={onError}
+      />
+    );
+  }
   return (
-    <li className="rise overflow-hidden rounded-[18px] bg-paper-deep ring-1 ring-line" style={{ animationDelay: `${delay}ms` }}>
-      <DemoFrame item={item} onError={() => setFailed(true)} />
-    </li>
+    <span className="grid h-full place-items-center bg-ink text-[13px] text-white/80">
+      Video demo
+    </span>
   );
 }
 
@@ -75,21 +122,92 @@ export function DemoThumb({
   );
 }
 
+function DemoLightbox({
+  items,
+  index,
+  onClose,
+  onChange,
+}: {
+  items: DemoMedia[];
+  index: number;
+  onClose: () => void;
+  onChange: (index: number) => void;
+}) {
+  const item = items[index];
+  const total = items.length;
+  const canMove = total > 1;
+
+  function go(delta: number) {
+    onChange((index + delta + total) % total);
+  }
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+      if (total < 2) return;
+      if (event.key === "ArrowRight") onChange((index + 1) % total);
+      if (event.key === "ArrowLeft") onChange((index - 1 + total) % total);
+    }
+
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [index, total, onClose, onChange]);
+
+  if (!item) return null;
+
+  return createPortal(
+    <div className="demo-lightbox" role="dialog" aria-modal="true" aria-label="Demo preview">
+      <div className="demo-lightbox-bar">
+        <p className="demo-lightbox-count">
+          {canMove ? `${index + 1} / ${total}` : "Preview"}
+        </p>
+        <button type="button" className="demo-lightbox-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
+      {canMove ? (
+        <button type="button" className="demo-lightbox-nav demo-lightbox-prev" onClick={() => go(-1)}>
+          Previous
+        </button>
+      ) : null}
+      <div className="demo-lightbox-stage">
+        <DemoFrame key={item.id} item={item} full />
+        {item.caption ? <p className="demo-lightbox-caption">{item.caption}</p> : null}
+      </div>
+      {canMove ? (
+        <button type="button" className="demo-lightbox-nav demo-lightbox-next" onClick={() => go(1)}>
+          Next
+        </button>
+      ) : null}
+    </div>,
+    document.body,
+  );
+}
+
 function DemoFrame({
   item,
   onError,
+  full = false,
 }: {
   item: DemoMedia;
   onError?: () => void;
+  full?: boolean;
 }) {
   const yt = youtubeId(item.src);
   const embed = embedSrc(item.src);
+  const src = yt && full ? `${embed}?autoplay=1` : embed;
 
   if (item.kind === "video" && (yt || embed !== item.src)) {
     return (
-      <div className="aspect-video bg-black">
+      <div className={full ? "demo-lightbox-media" : "aspect-video bg-black"}>
         <iframe
-          src={embed}
+          src={src}
           title="Project demo"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -104,9 +222,10 @@ function DemoFrame({
       <video
         src={item.src}
         controls
+        autoPlay={full}
         playsInline
         preload="metadata"
-        className="aspect-video w-full bg-black object-contain"
+        className={full ? "demo-lightbox-media bg-black object-contain" : "aspect-video w-full bg-black object-contain"}
       >
         Your browser does not support this video.
       </video>
@@ -117,7 +236,7 @@ function DemoFrame({
     <DemoImage
       src={item.src}
       alt=""
-      className="h-auto w-full"
+      className={full ? "demo-lightbox-media object-contain" : "h-auto w-full"}
       onError={onError}
     />
   );
