@@ -39,15 +39,15 @@ export default async function ClientProjectPage({ params }: PageProps) {
   return (
     <>
       <ClientHeader shareKey={key} />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-6">
+      <main className="project-shell mx-auto flex-1 px-6 py-6">
         <div className="card px-8 py-10">
         <p className="kicker rise">{categoryLabel(project.category)}</p>
-        <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">
+        <h1 className="display rise-2 mt-3 max-w-4xl text-[36px] sm:text-[44px]">
           {project.title}
         </h1>
-        <p className="rise-3 mt-5 text-[17px] leading-7 text-ink-dim">{project.tagline}</p>
+        <p className="rise-3 mt-5 max-w-3xl text-[17px] leading-7 text-ink-dim">{project.tagline}</p>
         {displayOutcome(project.outcome) ? (
-          <p className="mt-3 text-sm text-mist">{displayOutcome(project.outcome)}</p>
+          <p className="mt-3 max-w-3xl text-sm text-mist">{displayOutcome(project.outcome)}</p>
         ) : null}
         <DemoGallery media={demosForProject(project)} />
         <dl className="mt-12 grid gap-8 border-y border-line py-10 sm:grid-cols-2">
@@ -62,7 +62,7 @@ export default async function ClientProjectPage({ params }: PageProps) {
           ) : null}
         </dl>
         {stripSourceCopy(project.writeup) ? (
-          <div className="mt-10 space-y-4 text-[17px] leading-7 text-ink-dim">
+          <div className="mt-10 max-w-3xl space-y-4 text-[17px] leading-7 text-ink-dim">
             {stripSourceCopy(project.writeup)
               .split(/\n\n+/)
               .map((paragraph) => (

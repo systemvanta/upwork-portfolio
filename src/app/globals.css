@@ -647,6 +647,18 @@ select.field {
   animation: card-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.project-shell {
+  width: 100%;
+  max-width: 56rem;
+}
+
+@media (min-width: 1024px) {
+  .project-shell {
+    width: 90%;
+    max-width: 1680px;
+  }
+}
+
 .chip {
   border-radius: 9999px;
   padding: 0.35rem 0.75rem;
