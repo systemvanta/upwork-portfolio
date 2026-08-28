@@ -4,41 +4,76 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { embedSrc, isDirectVideo, posterSrc, youtubeId, type DemoMedia } from "@/lib/media";
 
-export function DemoGallery({ media }: { media: DemoMedia[] }) {
+export function DemoGallery({
+  media,
+  variant = "default",
+}: {
+  media: DemoMedia[];
+  variant?: "default" | "case";
+}) {
   const [failed, setFailed] = useState<Set<string>>(new Set());
   const [index, setIndex] = useState<number | null>(null);
   const items = media.filter((item) => !failed.has(item.id));
 
   if (media.length === 0 || items.length === 0) return null;
 
+  function markFailed(id: string) {
+    setFailed((current) => {
+      const next = new Set(current);
+      next.add(id);
+      return next;
+    });
+  }
+
+  const featured = variant === "case" ? items[0] : null;
+  const rest = variant === "case" ? items.slice(1) : items;
+
   return (
-    <section className="mt-10">
-      <p className="kicker">Demo</p>
-      <ul className="demo-strip mt-4">
-        {items.map((item, itemIndex) => (
-          <li key={item.id} className="demo-tile rise" style={{ animationDelay: `${itemIndex * 80}ms` }}>
-            <button
-              type="button"
-              className="demo-tile-btn"
-              onClick={() => setIndex(itemIndex)}
-            >
-              <DemoThumbCard
-                item={item}
-                onError={() =>
-                  setFailed((current) => {
-                    const next = new Set(current);
-                    next.add(item.id);
-                    return next;
-                  })
-                }
-              />
-              {item.kind === "video" ? (
-                <span className="demo-badge">Video</span>
-              ) : null}
-            </button>
-          </li>
-        ))}
-      </ul>
+    <section className={variant === "case" ? "case-demos" : "mt-10"}>
+      {variant === "default" ? <p className="kicker">Demo</p> : null}
+      {featured ? (
+        <button
+          type="button"
+          className="case-featured"
+          aria-label="Open demo preview"
+          onClick={() => setIndex(0)}
+        >
+          <DemoThumbCard
+            item={featured}
+            contain
+            loading="eager"
+            onError={() => markFailed(featured.id)}
+          />
+          {featured.kind === "video" ? <span className="demo-badge">Video</span> : null}
+        </button>
+      ) : null}
+      {rest.length > 0 ? (
+        <ul className={`demo-strip mt-4${variant === "case" ? " demo-strip-case" : ""}`}>
+          {rest.map((item, itemIndex) => {
+            const galleryIndex = featured ? itemIndex + 1 : itemIndex;
+            return (
+              <li key={item.id} className="demo-tile rise" style={{ animationDelay: `${itemIndex * 80}ms` }}>
+                <button
+                  type="button"
+                  className="demo-tile-btn"
+                  aria-label={`Open demo preview ${galleryIndex + 1}`}
+                  onClick={() => setIndex(galleryIndex)}
+                >
+                  <DemoThumbCard
+                    item={item}
+                    contain={variant === "case"}
+                    loading="lazy"
+                    onError={() => markFailed(item.id)}
+                  />
+                  {item.kind === "video" ? (
+                    <span className="demo-badge">Video</span>
+                  ) : null}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
       {index !== null ? (
         <DemoLightbox
           items={items}
@@ -54,9 +89,13 @@ export function DemoGallery({ media }: { media: DemoMedia[] }) {
 function DemoThumbCard({
   item,
   onError,
+  contain = false,
+  loading = "lazy",
 }: {
   item: DemoMedia;
   onError: () => void;
+  contain?: boolean;
+  loading?: "lazy" | "eager";
 }) {
   const poster = posterSrc(item);
   if (poster) {
@@ -64,7 +103,8 @@ function DemoThumbCard({
       <DemoImage
         src={poster}
         alt=""
-        className="h-full w-full object-cover object-top"
+        loading={loading}
+        className={contain ? "h-full w-full object-contain object-top" : "h-full w-full object-cover object-top"}
         onError={onError}
       />
     );
@@ -247,14 +287,16 @@ function DemoImage({
   alt,
   className,
   onError,
+  loading = "lazy",
 }: {
   src: string;
   alt: string;
   className?: string;
   onError?: () => void;
+  loading?: "lazy" | "eager";
 }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className={className} onError={onError} />
+    <img src={src} alt={alt} className={className} loading={loading} onError={onError} />
   );
 }
