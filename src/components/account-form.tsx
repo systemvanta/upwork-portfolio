@@ -9,7 +9,7 @@ import {
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending} className="btn btn-primary">
+    <button type="submit" disabled={pending} className={`btn btn-primary${pending ? " is-busy" : ""}`}>
       {pending ? "Saving…" : label}
     </button>
   );
@@ -29,14 +29,14 @@ export function AccountForms({
   return (
     <div className="space-y-10">
       {notice ? (
-        <p className="rounded-[12px] bg-brass/15 px-4 py-3 text-[15px] text-brass-soft">
+        <p className="pop-in rounded-2xl border border-line bg-fill px-4 py-3 text-[14px] text-ink">
           {notice}
         </p>
       ) : null}
 
-      <section className="card px-6 py-7 sm:px-8">
+      <section className="panel-in rounded-[28px] bg-fill px-6 py-7 sm:px-8">
         <p className="kicker">Email</p>
-        <h2 className="mt-2 text-[22px] font-semibold tracking-tight">
+        <h2 className="display mt-3 text-[28px]">
           Change email
         </h2>
         <form action={changeAccountEmail} className="mt-6 space-y-5">
@@ -62,7 +62,7 @@ export function AccountForms({
             />
           </label>
           {emailError ? (
-            <p className="text-sm text-brass" role="alert">
+            <p className="text-sm text-danger" role="alert">
               {emailError}
             </p>
           ) : null}
@@ -70,9 +70,9 @@ export function AccountForms({
         </form>
       </section>
 
-      <section className="card px-6 py-7 sm:px-8">
+      <section className="panel-in rounded-[28px] bg-fill px-6 py-7 sm:px-8">
         <p className="kicker">Password</p>
-        <h2 className="mt-2 text-[22px] font-semibold tracking-tight">
+        <h2 className="display mt-3 text-[28px]">
           Change password
         </h2>
         <form action={changeAccountPassword} className="mt-6 space-y-5">
@@ -109,7 +109,7 @@ export function AccountForms({
             />
           </label>
           {passwordError ? (
-            <p className="text-sm text-brass" role="alert">
+            <p className="text-sm text-danger" role="alert">
               {passwordError}
             </p>
           ) : null}

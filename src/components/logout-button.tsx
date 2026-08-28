@@ -9,7 +9,7 @@ export function LogoutButton() {
   return (
     <button
       type="button"
-      className="text-[15px] text-brass hover:opacity-80"
+      className="text-[14px] text-ink-dim transition-colors duration-200 hover:text-ink"
       onClick={async () => {
         await authClient.signOut();
         router.push("/");

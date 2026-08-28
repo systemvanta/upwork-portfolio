@@ -37,13 +37,15 @@ export default async function ProjectsPage({
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
-        <p className="kicker">Registry</p>
-        <h1 className="mt-2 text-[40px] font-semibold leading-none tracking-tight text-ink sm:text-[56px]">
-          {site.name}
-        </h1>
-        <p className="mt-4 max-w-xl text-[17px] leading-7 text-ink-dim">{site.tagline}</p>
-        <div className="mt-10">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6">
+        <div className="card px-6 py-10 sm:px-10">
+        <p className="kicker rise">
+          <span className="live-dot" />
+          Registry
+        </p>
+        <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">Works</h1>
+        <p className="rise-3 mt-5 max-w-xl text-[17px] leading-7 text-ink-dim">{site.tagline}</p>
+        <div className="rise-4 mt-10">
           <CategoryChips active={category} basePath="/projects" />
         </div>
         {projects.length === 0 ? (
@@ -68,6 +70,7 @@ export default async function ProjectsPage({
             category={category}
           />
         )}
+        </div>
       </main>
       <Footer />
     </>

@@ -17,18 +17,20 @@ export default async function NewProjectPage() {
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-        <p className="kicker">Register</p>
-        <h1 className="mt-2 text-[40px] font-semibold leading-none tracking-tight sm:text-[48px]">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-6">
+        <div className="card px-8 py-10">
+        <p className="kicker rise">Register</p>
+        <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">
           Register a project
         </h1>
-        <p className="mt-4 max-w-xl text-ink-dim leading-7">
+        <p className="rise-3 mt-4 max-w-xl text-ink-dim leading-7">
           Add a portfolio to the hub with screenshots or a video demo.
           Published projects appear in the registry and in generated skill
           links.
         </p>
-        <div className="mt-10">
+        <div className="rise-4 mt-10">
           <ProjectForm action={createProject} />
+        </div>
         </div>
       </main>
       <Footer />

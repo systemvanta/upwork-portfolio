@@ -60,7 +60,7 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
             <button
               key={skill}
               type="button"
-              className="chip shrink-0 hover:bg-ink hover:text-white"
+              className="chip chip-pop shrink-0 hover:bg-ink hover:text-white"
               onClick={() => commit(skills.filter((item) => item !== skill))}
             >
               {skill} ×

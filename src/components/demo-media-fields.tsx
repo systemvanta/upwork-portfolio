@@ -24,7 +24,7 @@ export function DemoMediaFields({ existing = [] }: { existing?: DemoMedia[] }) {
             return (
               <li
                 key={item.id}
-                className={`overflow-hidden rounded-[14px] bg-fill ${keep ? "" : "opacity-40"}`}
+                className={`overflow-hidden bg-fill ${keep ? "" : "opacity-40"}`}
               >
                 {keep ? <input type="hidden" name="keepMedia" value={item.id} /> : null}
                 <div className="relative aspect-video bg-elevated">
@@ -68,16 +68,23 @@ export function DemoMediaFields({ existing = [] }: { existing?: DemoMedia[] }) {
 
       <label className="block">
         <span className="kicker">Upload pictures or videos</span>
-        <input
-          name="demoFiles"
-          type="file"
-          multiple
-          accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"
-          className="field file:mr-3 file:rounded-lg file:border-0 file:bg-brass file:px-3 file:py-1.5 file:text-[13px] file:font-semibold file:text-white"
-          onChange={(event) =>
-            setFiles(Array.from(event.target.files ?? []).filter((file) => file.size > 0))
-          }
-        />
+        <span className="upload">
+          <input
+            name="demoFiles"
+            type="file"
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"
+            className="upload-input"
+            onChange={(event) =>
+              setFiles(Array.from(event.target.files ?? []).filter((file) => file.size > 0))
+            }
+          />
+          <span className="upload-cta">
+            {files.length > 0
+              ? `${files.length} ${files.length === 1 ? "file" : "files"} chosen`
+              : "Choose Files"}
+          </span>
+        </span>
       </label>
 
       {files.length > 0 ? (

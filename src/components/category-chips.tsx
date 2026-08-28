@@ -20,17 +20,17 @@ export function CategoryChips({
 
   return (
     <div className="space-y-5">
-      <ul className="flex flex-wrap gap-2">
+      <ul className="chip-row flex flex-wrap gap-2">
         <li>
           <Chip href={hrefFor("")} label="All" active={!active} />
         </li>
       </ul>
-      {categoryGroups().map(({ group, items }) => (
-        <div key={group}>
-          <p className="mb-2 text-[12px] font-medium text-mist">{group}</p>
-          <ul className="flex flex-wrap gap-2">
-            {items.map((category) => (
-              <li key={category.slug}>
+      {categoryGroups().map(({ group, items }, groupIndex) => (
+        <div key={group} className="rise" style={{ animationDelay: `${120 + groupIndex * 50}ms` }}>
+          <p className="mb-2 text-[13px] font-medium text-mist">{group}</p>
+          <ul className="chip-row flex flex-wrap gap-2">
+            {items.map((category, index) => (
+              <li key={category.slug} style={{ animationDelay: `${160 + groupIndex * 50 + index * 18}ms` }}>
                 <Chip
                   href={hrefFor(category.slug)}
                   label={category.label}
@@ -57,10 +57,10 @@ function Chip({
   return (
     <Link
       href={href}
-      className={`inline-flex rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
+      className={`chip-link ${
         active
-          ? "bg-white text-black"
-          : "bg-white/10 text-ink-dim hover:bg-white/16 hover:text-ink"
+          ? "bg-ink text-white shadow-[0_8px_18px_rgba(31,30,30,0.16)] chip-link-active"
+          : "bg-fill text-ink-dim hover:bg-ink/10 hover:text-ink"
       }`}
     >
       {label}

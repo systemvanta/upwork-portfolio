@@ -11,7 +11,7 @@ export function LoginForm() {
 
   return (
     <form
-      className="space-y-5"
+      className="login-form space-y-5"
       onSubmit={async (event) => {
         event.preventDefault();
         setPending(true);
@@ -39,7 +39,7 @@ export function LoginForm() {
       }}
     >
       <label className="block">
-        <span className="kicker">Email</span>
+        <span className="text-[14px] font-medium text-ink-dim">Email address</span>
         <input
           name="email"
           type="email"
@@ -49,7 +49,7 @@ export function LoginForm() {
         />
       </label>
       <label className="block">
-        <span className="kicker">Password</span>
+        <span className="text-[14px] font-medium text-ink-dim">Password</span>
         <input
           name="password"
           type="password"
@@ -59,12 +59,12 @@ export function LoginForm() {
         />
       </label>
       {error ? (
-        <p className="text-sm text-brass" role="alert">
+        <p className="text-sm text-danger" role="alert">
           {error}
         </p>
       ) : null}
-      <button type="submit" disabled={pending} className="btn btn-primary w-full">
-        {pending ? "Signing in…" : "Log in"}
+      <button type="submit" disabled={pending} className={`btn btn-primary w-full${pending ? " is-busy" : ""}`}>
+        {pending ? "Signing in…" : "Continue"}
       </button>
     </form>
   );

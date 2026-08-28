@@ -34,9 +34,9 @@ export function GenerateLink({ initialSkills = [] }: { initialSkills?: string[] 
   }
 
   return (
-    <section className="card bg-paper-deep/40 p-6 sm:p-8">
+    <section className="panel-in rounded-[28px] bg-fill p-6 sm:p-8">
       <p className="kicker">Generate link</p>
-      <h2 className="mt-2 text-[28px] font-semibold tracking-tight">
+      <h2 className="display mt-3 text-[36px]">
         Show only related portfolios
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-mist">
@@ -71,7 +71,7 @@ export function GenerateLink({ initialSkills = [] }: { initialSkills?: string[] 
           type="button"
           onClick={generate}
           disabled={pending}
-          className="btn btn-primary h-12 shrink-0 !py-0 sm:px-5"
+          className={`btn btn-primary h-12 shrink-0 !py-0 sm:px-5${pending ? " is-busy" : ""}`}
         >
           {pending ? "Generating…" : "Generate link"}
         </button>
@@ -79,9 +79,9 @@ export function GenerateLink({ initialSkills = [] }: { initialSkills?: string[] 
       <p className="mt-2 text-[13px] text-mist">
         Clients see at most this many matching portfolios.
       </p>
-      {hint ? <p className="mt-3 text-sm text-mist">{hint}</p> : null}
+      {hint ? <p className="pop-in mt-3 text-sm text-mist">{hint}</p> : null}
       {shareUrl ? (
-        <p className="mt-4 break-all text-sm">
+        <p className="pop-in mt-4 break-all text-sm">
           <a
             href={shareUrl}
             target="_blank"

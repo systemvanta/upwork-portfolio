@@ -27,10 +27,11 @@ export default async function EditProjectPage({
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
-        <p className="kicker">Edit</p>
-        <h1 className="mt-2 text-[34px] font-semibold tracking-tight">{project.title}</h1>
-        <div className="mt-10">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-6">
+        <div className="card px-8 py-10">
+        <p className="kicker rise">Edit</p>
+        <h1 className="display rise-2 mt-3 text-[32px]">{project.title}</h1>
+        <div className="rise-3 mt-10">
           <ProjectForm
             action={action}
             project={{
@@ -48,9 +49,9 @@ export default async function EditProjectPage({
               tradeoff: project.tradeoff,
               method: project.method,
               writeup: project.writeup,
-              status: project.status,
             }}
           />
+        </div>
         </div>
       </main>
       <Footer />

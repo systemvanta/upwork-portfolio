@@ -28,7 +28,6 @@ const projectSchema = z.object({
   tradeoff: z.string().trim().min(1),
   method: z.string().trim().optional(),
   writeup: z.string().trim().optional(),
-  status: z.enum(["published", "wip"]),
 });
 
 function optionalUrl(value?: string) {
@@ -50,7 +49,6 @@ function parseForm(formData: FormData) {
     tradeoff: formData.get("tradeoff"),
     method: formData.get("method"),
     writeup: String(formData.get("writeup") ?? ""),
-    status: formData.get("status"),
   });
 }
 
@@ -118,7 +116,7 @@ export async function createProject(formData: FormData) {
       title: data.title,
       tagline: data.tagline,
       category: data.category,
-      status: data.status,
+      status: "published",
       liveUrl: optionalUrl(data.liveUrl),
       outcome: data.outcome ?? "",
       problem: data.problem,
@@ -172,7 +170,7 @@ export async function updateProject(projectId: string, formData: FormData) {
       title: data.title,
       tagline: data.tagline,
       category: data.category,
-      status: data.status,
+      status: "published",
       liveUrl: optionalUrl(data.liveUrl),
       outcome: data.outcome ?? "",
       problem: data.problem,
@@ -195,22 +193,27 @@ export async function updateProject(projectId: string, formData: FormData) {
   redirect(`/projects/${slug}`);
 }
 
-export async function unpublishProject(projectId: string) {
+export async function deleteProject(projectId: string) {
   const session = await getSession();
   if (!session?.user) redirect("/login");
 
-  const existing = await prisma.project.findUnique({ where: { id: projectId } });
+  const existing = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { media: true },
+  });
   if (!existing || existing.ownerId !== session.user.id) {
     throw new Error("Not allowed");
   }
 
-  await prisma.project.update({
-    where: { id: projectId },
-    data: { status: "wip" },
-  });
+  for (const item of existing.media) {
+    await removeStoredUpload(item.src);
+  }
+
+  await prisma.project.delete({ where: { id: projectId } });
 
   revalidatePath("/");
   revalidatePath("/s");
+  revalidatePath("/projects");
   revalidatePath(`/projects/${existing.slug}`);
-  redirect(`/projects/${existing.slug}`);
+  redirect("/projects");
 }

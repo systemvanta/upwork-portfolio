@@ -68,14 +68,17 @@ export function ProjectGrid({
   return (
     <>
       <ol className="mt-8 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+        {projects.map((project, index) => (
+          <ProjectCard key={project.id} project={project} delay={80 + index * 60} />
         ))}
       </ol>
-      {error ? <p className="mt-6 text-sm text-brass">{error}</p> : null}
+      {error ? <p className="mt-6 text-sm text-danger">{error}</p> : null}
       {cursor ? <div ref={sentinelRef} className="h-10" aria-hidden /> : null}
       {loading ? (
-        <p className="mt-6 text-center text-sm text-mist">Loading…</p>
+        <p className="mt-6 text-center text-sm text-mist">
+          <span className="live-dot" />
+          Loading…
+        </p>
       ) : null}
     </>
   );

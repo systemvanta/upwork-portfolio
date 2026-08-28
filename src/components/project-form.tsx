@@ -3,7 +3,7 @@
 import { categoryGroups } from "@/data/categories";
 import { DemoMediaFields } from "@/components/demo-media-fields";
 import { SkillInput } from "@/components/skill-input";
-import { unpublishProject } from "@/app/actions/projects";
+import { deleteProject } from "@/app/actions/projects";
 import type { DemoMedia } from "@/lib/media";
 
 type ProjectFormValues = {
@@ -21,7 +21,6 @@ type ProjectFormValues = {
   tradeoff?: string;
   method?: string;
   writeup?: string;
-  status?: string;
 };
 
 export function ProjectForm({
@@ -32,7 +31,7 @@ export function ProjectForm({
   project?: ProjectFormValues;
 }) {
   return (
-    <form action={action} className="space-y-6">
+    <form action={action} className="form-stagger space-y-6">
       <Field label="Title" name="title" required defaultValue={project?.title} />
       <Field
         label="Tagline"
@@ -83,17 +82,6 @@ export function ProjectForm({
         defaultValue={project?.method}
       />
       <Area label="Write-up" name="writeup" defaultValue={project?.writeup} rows={6} />
-      <label className="block">
-        <span className="kicker">Status</span>
-        <select
-          name="status"
-          defaultValue={project?.status ?? "published"}
-          className="field"
-        >
-          <option value="published">Published</option>
-          <option value="wip">WIP</option>
-        </select>
-      </label>
       <div className="flex flex-wrap gap-3">
         <button type="submit" className="btn btn-primary">
           {project?.id ? "Save project" : "Register project"}
@@ -101,10 +89,16 @@ export function ProjectForm({
         {project?.id ? (
           <button
             type="submit"
-            formAction={unpublishProject.bind(null, project.id)}
-            className="btn btn-ghost"
+            formNoValidate
+            formAction={deleteProject.bind(null, project.id)}
+            className="btn btn-danger"
+            onClick={(event) => {
+              if (!confirm("Delete this project? This cannot be undone.")) {
+                event.preventDefault();
+              }
+            }}
           >
-            Unpublish
+            Delete
           </button>
         ) : null}
       </div>

@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { Scene } from "@/components/scene";
 import { site } from "@/data/site";
 import "./globals.css";
+
+const ui = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-ui",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -8,19 +15,13 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.tagline,
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "48x48" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-    ],
-    apple: "/apple-icon.png",
-  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
+    <html lang="en" className={`${ui.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col font-sans text-ink">
+        <Scene />
         {children}
       </body>
     </html>

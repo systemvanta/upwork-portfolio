@@ -10,20 +10,20 @@ export function DemoGallery({ media }: { media: DemoMedia[] }) {
     <section className="mt-10">
       <p className="kicker">Demo</p>
       <ul className="mt-4 grid gap-3">
-        {media.map((item) => (
-          <DemoGalleryItem key={item.id} item={item} />
+        {media.map((item, index) => (
+          <DemoGalleryItem key={item.id} item={item} delay={index * 90} />
         ))}
       </ul>
     </section>
   );
 }
 
-function DemoGalleryItem({ item }: { item: DemoMedia }) {
+function DemoGalleryItem({ item, delay = 0 }: { item: DemoMedia; delay?: number }) {
   const [failed, setFailed] = useState(false);
   if (failed) return null;
 
   return (
-    <li className="overflow-hidden rounded-[18px] bg-paper-deep ring-1 ring-line">
+    <li className="rise overflow-hidden rounded-[18px] bg-paper-deep ring-1 ring-line" style={{ animationDelay: `${delay}ms` }}>
       <DemoFrame item={item} onError={() => setFailed(true)} />
     </li>
   );
@@ -41,8 +41,8 @@ export function DemoThumb({
   const first = media[0];
   const frame =
     size === "large"
-      ? "aspect-[4/5] rounded-[18px] sm:aspect-[3/4]"
-      : "aspect-video rounded-[14px]";
+      ? "aspect-[4/5] rounded-[16px] ring-1 ring-line sm:aspect-[3/4]"
+      : "aspect-video rounded-[14px] ring-1 ring-line";
 
   const [failed, setFailed] = useState(false);
   if (!first || failed) return null;
@@ -54,7 +54,7 @@ export function DemoThumb({
         <DemoImage
           src={poster}
           alt=""
-          className="h-full w-full object-cover object-top"
+          className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           onError={() => setFailed(true)}
         />
       ) : (
@@ -63,11 +63,11 @@ export function DemoThumb({
         </div>
       )}
       {first.kind === "video" ? (
-        <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-white">
+        <span className="absolute bottom-3 left-3 rounded-full bg-ink px-2.5 py-1 text-[11px] font-medium text-white">
           Video
         </span>
       ) : media.length > 1 ? (
-        <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-white">
+        <span className="absolute bottom-3 left-3 rounded-full bg-ink px-2.5 py-1 text-[11px] font-medium text-white">
           {media.length} demos
         </span>
       ) : null}

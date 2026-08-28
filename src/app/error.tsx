@@ -10,8 +10,9 @@ export default function ErrorPage({
 }) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-6 py-16">
+      <section className="card px-10 py-12">
       <p className="kicker">Error</p>
-      <h1 className="mt-2 text-[34px] font-semibold tracking-tight text-ink">
+      <h1 className="display mt-3 text-[36px]">
         The hub could not load
       </h1>
       <p className="mt-4 text-[15px] text-ink-dim">
@@ -25,6 +26,7 @@ export default function ErrorPage({
           Home
         </Link>
       </div>
+      </section>
     </main>
   );
 }

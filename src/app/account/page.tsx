@@ -35,21 +35,23 @@ export default async function AccountPage({
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-lg flex-1 px-6 py-12">
-        <p className="kicker">Account</p>
-        <h1 className="mt-2 text-[40px] font-semibold tracking-tight">
+      <main className="mx-auto w-full max-w-lg flex-1 px-6 py-6">
+        <div className="card px-8 py-10">
+        <p className="kicker rise">Account</p>
+        <h1 className="display rise-2 mt-3 text-[36px]">
           Email and password
         </h1>
-        <p className="mt-3 text-[15px] leading-6 text-ink-dim">
+        <p className="rise-3 mt-3 text-[15px] leading-6 text-ink-dim">
           Signed in as {session.user.email}. Changes apply to this login only.
         </p>
-        <div className="mt-10">
+        <div className="rise-4 mt-10">
           <AccountForms
             email={session.user.email}
             notice={notice}
             emailError={params.emailError}
             passwordError={params.passwordError}
           />
+        </div>
         </div>
       </main>
       <Footer />

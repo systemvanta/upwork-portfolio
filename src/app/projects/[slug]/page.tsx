@@ -37,15 +37,13 @@ export default async function ProjectPage({ params }: PageProps) {
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
-        <p className="kicker">
-          {categoryLabel(project.category)}
-          {project.status === "wip" ? " · WIP" : ""}
-        </p>
-        <h1 className="mt-2 text-[40px] font-semibold leading-[1.05] tracking-tight sm:text-[52px]">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-6">
+        <div className="card px-8 py-10">
+        <p className="kicker rise">{categoryLabel(project.category)}</p>
+        <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">
           {project.title}
         </h1>
-        <p className="mt-5 text-[17px] leading-7 text-ink-dim">{project.tagline}</p>
+        <p className="rise-3 mt-5 text-[17px] leading-7 text-ink-dim">{project.tagline}</p>
         {displayOutcome(project.outcome) ? (
           <p className="mt-3 text-sm text-mist">{displayOutcome(project.outcome)}</p>
         ) : null}
@@ -81,7 +79,7 @@ export default async function ProjectPage({ params }: PageProps) {
           {project.skills.map((row) => (
             <li
               key={row.id}
-              className="chip"
+              className="chip chip-pop"
             >
               {row.skill}
             </li>
@@ -101,13 +99,13 @@ export default async function ProjectPage({ params }: PageProps) {
         </div>
         {others.length > 0 ? (
           <aside className="mt-16 border-t border-line pt-10">
-            <h2 className="text-[22px] font-semibold tracking-tight">More projects</h2>
+            <h2 className="display text-[32px]">More projects</h2>
             <ul className="mt-5 space-y-3">
               {others.map((item) => (
                 <li key={item.id}>
                   <Link
                     href={`/projects/${item.slug}`}
-                    className="text-[19px] font-semibold tracking-tight hover:text-brass"
+                    className="font-headline text-[22px] tracking-tight hover:text-brass"
                   >
                     {item.title}
                   </Link>
@@ -116,6 +114,7 @@ export default async function ProjectPage({ params }: PageProps) {
             </ul>
           </aside>
         ) : null}
+        </div>
       </main>
       <Footer />
     </>
