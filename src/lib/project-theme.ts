@@ -4,8 +4,11 @@ export type ProjectTheme = {
 };
 
 const NAMED: { test: RegExp; theme: ProjectTheme }[] = [
-  { test: /rebecca\s*minkoff/, theme: { accent: "#6b4e37", accentSoft: "#f3ece4" } },
+  { test: /rebecca\s*minkoff/, theme: { accent: "#8a6f52", accentSoft: "#f5efe6" } },
   { test: /skinny\s*dip/, theme: { accent: "#d61f69", accentSoft: "#fde8f1" } },
+  { test: /\bkith\b/, theme: { accent: "#2a2a2a", accentSoft: "#eceae6" } },
+  { test: /gorjana/, theme: { accent: "#9a7b4f", accentSoft: "#f6f0e6" } },
+  { test: /cluse/, theme: { accent: "#5c6b63", accentSoft: "#eef1ef" } },
   { test: /claude/, theme: { accent: "#c2410c", accentSoft: "#fdeee6" } },
   { test: /lovable/, theme: { accent: "#7c3aed", accentSoft: "#f3eafd" } },
   { test: /shopify/, theme: { accent: "#1f3d2b", accentSoft: "#e8f0ea" } },

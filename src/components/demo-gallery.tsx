@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { ParallaxFrame } from "@/components/parallax-frame";
 import { embedSrc, isDirectVideo, posterSrc, youtubeId, type DemoMedia } from "@/lib/media";
+
+function showcaseLayout(count: number) {
+  if (count <= 1) return "solo";
+  if (count === 2) return "duo";
+  if (count === 3) return "trio";
+  return "mosaic";
+}
 
 export function DemoGallery({
   media,
@@ -25,55 +33,60 @@ export function DemoGallery({
     });
   }
 
-  const featured = variant === "case" ? items[0] : null;
-  const rest = variant === "case" ? items.slice(1) : items;
+  if (variant === "case") {
+    const layout = showcaseLayout(items.length);
+    return (
+      <section className="case-showcase" aria-label="Project demo">
+        <p className="case-kicker">Demo</p>
+        <ParallaxFrame className={`case-showcase-grid case-showcase-grid--${layout}`}>
+          {items.map((item, itemIndex) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`case-shot${itemIndex === 0 ? " case-shot--primary" : " case-shot--support"}`}
+              aria-label={`Open demo preview ${itemIndex + 1}`}
+              onClick={() => setIndex(itemIndex)}
+            >
+              <DemoThumbCard
+                item={item}
+                contain
+                loading={itemIndex === 0 ? "eager" : "lazy"}
+                onError={() => markFailed(item.id)}
+              />
+              {item.kind === "video" ? <span className="demo-badge">Video</span> : null}
+            </button>
+          ))}
+        </ParallaxFrame>
+        {index !== null ? (
+          <DemoLightbox
+            items={items}
+            index={index}
+            onClose={() => setIndex(null)}
+            onChange={setIndex}
+          />
+        ) : null}
+      </section>
+    );
+  }
 
   return (
-    <section className={variant === "case" ? "case-demos" : "mt-10"}>
-      {variant === "default" ? <p className="kicker">Demo</p> : null}
-      {featured ? (
-        <button
-          type="button"
-          className="case-featured"
-          aria-label="Open demo preview"
-          onClick={() => setIndex(0)}
-        >
-          <DemoThumbCard
-            item={featured}
-            contain
-            loading="eager"
-            onError={() => markFailed(featured.id)}
-          />
-          {featured.kind === "video" ? <span className="demo-badge">Video</span> : null}
-        </button>
-      ) : null}
-      {rest.length > 0 ? (
-        <ul className={`demo-strip mt-4${variant === "case" ? " demo-strip-case" : ""}`}>
-          {rest.map((item, itemIndex) => {
-            const galleryIndex = featured ? itemIndex + 1 : itemIndex;
-            return (
-              <li key={item.id} className="demo-tile rise" style={{ animationDelay: `${itemIndex * 80}ms` }}>
-                <button
-                  type="button"
-                  className="demo-tile-btn"
-                  aria-label={`Open demo preview ${galleryIndex + 1}`}
-                  onClick={() => setIndex(galleryIndex)}
-                >
-                  <DemoThumbCard
-                    item={item}
-                    contain={variant === "case"}
-                    loading="lazy"
-                    onError={() => markFailed(item.id)}
-                  />
-                  {item.kind === "video" ? (
-                    <span className="demo-badge">Video</span>
-                  ) : null}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+    <section className="mt-10">
+      <p className="kicker">Demo</p>
+      <ul className="demo-strip mt-4">
+        {items.map((item, itemIndex) => (
+          <li key={item.id} className="demo-tile rise" style={{ animationDelay: `${itemIndex * 80}ms` }}>
+            <button
+              type="button"
+              className="demo-tile-btn"
+              aria-label={`Open demo preview ${itemIndex + 1}`}
+              onClick={() => setIndex(itemIndex)}
+            >
+              <DemoThumbCard item={item} onError={() => markFailed(item.id)} />
+              {item.kind === "video" ? <span className="demo-badge">Video</span> : null}
+            </button>
+          </li>
+        ))}
+      </ul>
       {index !== null ? (
         <DemoLightbox
           items={items}
@@ -104,7 +117,7 @@ function DemoThumbCard({
         src={poster}
         alt=""
         loading={loading}
-        className={contain ? "h-full w-full object-contain object-top" : "h-full w-full object-cover object-top"}
+        className={contain ? "case-shot-media" : "h-full w-full object-cover object-top"}
         onError={onError}
       />
     );
