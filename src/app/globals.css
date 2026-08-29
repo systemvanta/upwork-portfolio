@@ -1073,7 +1073,7 @@ select.field {
   display: grid;
   gap: 0.65rem;
   margin-top: 1.35rem;
-  max-width: var(--measure);
+  max-width: none;
   list-style: none;
 }
 
@@ -1096,8 +1096,45 @@ select.field {
   background: var(--accent);
 }
 
+.case-closing-row {
+  display: grid;
+  gap: 0;
+  margin-top: 3.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.case-closing-row > .case-section {
+  margin-top: 0;
+  padding-top: 2.5rem;
+  border-top: 0;
+}
+
+@media (min-width: 900px) {
+  .case-closing-row {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 0 2.5rem;
+  }
+
+  .case-closing-row > .case-section:first-child:not(:only-child) {
+    padding-right: 2.5rem;
+    box-shadow: inset -1px 0 0 var(--border);
+  }
+
+  .case-closing-row > .case-section:only-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 899px) {
+  .case-closing-row > .case-section + .case-section {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+}
+
 .case-writeup-body {
-  max-width: var(--measure);
+  max-width: none;
   margin-top: 1.35rem;
 }
 

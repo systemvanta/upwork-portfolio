@@ -181,29 +181,30 @@ export function ProjectCaseStudy({
         </Reveal>
       ) : null}
 
-      {metricItems.length > 0 ? (
+      {metricItems.length > 0 || writeup ? (
         <Reveal>
-          <section className="case-section case-measure" aria-labelledby="case-measure">
-            <SectionHead index={nextIndex()} label="Evidence" title="How it was measured" />
-            <ul id="case-measure" className="case-metric-list">
-              {metricItems.map((item) => (
-                <li key={item.slice(0, 48)}>{item}</li>
-              ))}
-            </ul>
-          </section>
-        </Reveal>
-      ) : null}
-
-      {writeup ? (
-        <Reveal>
-          <section className="case-section case-writeup" aria-labelledby="case-writeup">
-            <SectionHead index={nextIndex()} label="Notes" title="Write-up" />
-            <div id="case-writeup" className="case-writeup-body">
-              {writeup.split(/\n\n+/).map((paragraph) => (
-                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-              ))}
-            </div>
-          </section>
+          <div className="case-closing-row">
+            {metricItems.length > 0 ? (
+              <section className="case-section case-measure" aria-labelledby="case-measure">
+                <SectionHead index={nextIndex()} label="Evidence" title="How it was measured" />
+                <ul id="case-measure" className="case-metric-list">
+                  {metricItems.map((item) => (
+                    <li key={item.slice(0, 48)}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+            {writeup ? (
+              <section className="case-section case-writeup" aria-labelledby="case-writeup">
+                <SectionHead index={nextIndex()} label="Notes" title="Write-up" />
+                <div id="case-writeup" className="case-writeup-body">
+                  {writeup.split(/\n\n+/).map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
         </Reveal>
       ) : null}
 
