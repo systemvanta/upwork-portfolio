@@ -18,13 +18,29 @@ function uniqueSkills(next: string[]) {
   return [...new Set(next.map((skill) => skill.trim()).filter(Boolean))];
 }
 
+function splitSkillDraft(value: string) {
+  return value
+    .split(/[,;|\n\r\t]+/)
+    .map((skill) => skill.trim())
+    .filter(Boolean);
+}
+
+function hasSkillDelimiter(value: string) {
+  return /[,;|\n\r\t]/.test(value);
+}
+
+function appendSkillText(current: string[], text: string) {
+  if (!text.trim()) return current;
+  return uniqueSkills([...current, ...splitSkillDraft(text)]);
+}
+
 export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
   function SkillInput(
     {
       name = "skills",
       defaultValue = [],
       onChange,
-      placeholder = "Add a skill and press Enter",
+      placeholder = "Add skills separated by commas, or paste a list",
       className = "",
     },
     ref,
@@ -41,9 +57,18 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
 
     function addDraft() {
       if (!draft.trim()) return skills;
-      const next = commit([...skills, ...draft.split(",")]);
+      const next = appendSkillText(skills, draft);
       setDraft("");
-      return next;
+      return commit(next);
+    }
+
+    function ingestDraft(value: string) {
+      if (!hasSkillDelimiter(value)) {
+        setDraft(value);
+        return;
+      }
+      commit(appendSkillText(skills, value));
+      setDraft("");
     }
 
     useImperativeHandle(ref, () => ({
@@ -68,7 +93,14 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
           ))}
           <input
             value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={(event) => ingestDraft(event.target.value)}
+            onPaste={(event) => {
+              const text = event.clipboardData.getData("text");
+              if (!hasSkillDelimiter(text)) return;
+              event.preventDefault();
+              commit(appendSkillText(skills, text));
+              setDraft("");
+            }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === ",") {
                 event.preventDefault();
