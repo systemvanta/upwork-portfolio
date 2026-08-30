@@ -18,22 +18,19 @@ export function ProjectCard({
 
   return (
     <li className="rise" style={{ animationDelay: `${delay}ms` }}>
-      <Link href={to} className="project-link group block">
+      <Link href={to} className="project-link portfolio-card group block">
         <DemoThumb media={media} title={project.title} size="large" />
-        <div className={media.length > 0 ? "mt-3" : undefined}>
-          <p className="kicker">{categoryLabel(project.category)}</p>
-          <h3 className="mt-1 text-[18px] font-semibold tracking-tight text-ink">
-            {project.title}
-          </h3>
-          <p className="mt-1.5 line-clamp-2 text-[13px] leading-5 text-ink-dim">
-            {project.tagline}
-          </p>
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {project.skills.map((row) => (
-              <li key={row.id} className="chip">
-                {row.skill}
-              </li>
+        <div className={media.length > 0 ? "mt-4" : undefined}>
+          <p className="portfolio-card-eyebrow">{categoryLabel(project.category)}</p>
+          <h3 className="portfolio-card-title">{project.title}</h3>
+          <p className="portfolio-card-tagline">{project.tagline}</p>
+          <ul className="portfolio-card-skills">
+            {project.skills.slice(0, 4).map((row) => (
+              <li key={row.id}>{row.skill}</li>
             ))}
+            {project.skills.length > 4 ? (
+              <li className="portfolio-card-more">+{project.skills.length - 4}</li>
+            ) : null}
           </ul>
         </div>
       </Link>
