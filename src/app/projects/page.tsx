@@ -2,7 +2,6 @@ import { CategoryChips } from "@/components/category-chips";
 import { EmptyState } from "@/components/empty-state";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { PortfolioIntro } from "@/components/portfolio-intro";
 import { ProjectGrid } from "@/components/project-grid";
 import { site } from "@/data/site";
 import { isCategorySlug } from "@/data/categories";
@@ -40,13 +39,13 @@ export default async function ProjectsPage({
       <Header count={count} />
       <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6">
         <div className="card px-6 py-10 sm:px-10">
-        <PortfolioIntro
-          eyebrow="Registry"
-          title="Works"
-          description={site.tagline}
-          live
-        />
-        <div className="portfolio-filters rise-4">
+        <p className="kicker rise">
+          <span className="live-dot" />
+          Registry
+        </p>
+        <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">Works</h1>
+        <p className="rise-3 mt-5 max-w-xl text-[17px] leading-7 text-ink-dim">{site.tagline}</p>
+        <div className="rise-4 mt-10">
           <CategoryChips active={category} basePath="/projects" />
         </div>
         {projects.length === 0 ? (

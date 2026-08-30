@@ -17,7 +17,7 @@ export default async function NewProjectPage() {
   return (
     <>
       <Header count={count} />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-6">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-6">
         <div className="card px-8 py-10">
         <p className="kicker rise">Register</p>
         <h1 className="display rise-2 mt-3 text-[36px] sm:text-[44px]">

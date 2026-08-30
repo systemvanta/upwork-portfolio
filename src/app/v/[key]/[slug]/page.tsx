@@ -35,7 +35,7 @@ export default async function ClientProjectPage({ params }: PageProps) {
   return (
     <>
       <ClientHeader shareKey={key} />
-      <main className="project-shell page-focus mx-auto flex-1 px-6 py-6">
+      <main className="project-shell mx-auto flex-1 px-6 py-6">
         <ProjectCaseStudy
           project={project}
           others={others}

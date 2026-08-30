@@ -7,7 +7,7 @@ export function ClientHeader({ shareKey }: { shareKey: string }) {
       <div className="mx-auto max-w-6xl px-6 py-4">
         <div className="header-shell rounded-full bg-white/85 px-5 py-3 shadow-[0_8px_30px_rgba(31,30,30,0.06)] backdrop-blur-md">
           <Link href={`/v/${shareKey}`}>
-            <SiteLogo subtitle="Curated portfolios" />
+            <SiteLogo />
           </Link>
         </div>
       </div>

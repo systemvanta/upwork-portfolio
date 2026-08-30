@@ -33,7 +33,7 @@ export default async function ProjectPage({ params }: PageProps) {
   return (
     <>
       <Header count={count} />
-      <main className="project-shell page-focus mx-auto flex-1 px-6 py-6">
+      <main className="project-shell mx-auto flex-1 px-6 py-6">
         <ProjectCaseStudy
           project={project}
           others={others}

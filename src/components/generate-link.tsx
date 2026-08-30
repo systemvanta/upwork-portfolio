@@ -34,11 +34,14 @@ export function GenerateLink({ initialSkills = [] }: { initialSkills?: string[] 
   }
 
   return (
-    <section className="generate-panel">
-      <p className="portfolio-eyebrow">Skill match</p>
+    <section className="panel-in rounded-[28px] bg-fill p-6 sm:p-8">
+      <p className="kicker">Generate link</p>
+      <h2 className="display mt-3 text-[36px]">
+        Show only related portfolios
+      </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-mist">
-        Enter a skill set and how many portfolios to show. A hashed link appears
-        below — send it to a client.
+        Enter a skill set and how many portfolios to show. A hashed key appears
+        below — send that link to a client.
       </p>
       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1">

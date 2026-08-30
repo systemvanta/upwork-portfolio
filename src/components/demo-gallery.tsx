@@ -153,8 +153,8 @@ export function DemoThumb({
       {poster ? (
         <DemoImage
           src={poster}
-          alt={title ? `Preview of ${title}` : "Project preview"}
-          className="h-full w-full object-contain object-top p-1 transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+          alt=""
+          className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           onError={() => setFailed(true)}
         />
       ) : (
