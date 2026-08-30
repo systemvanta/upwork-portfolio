@@ -34,6 +34,9 @@ export async function Header({
               <Link href="/s" className="nav-link text-ink-dim transition-colors duration-200 hover:text-ink">
                 Generate
               </Link>
+              <Link href="/analytics" className="nav-link hidden text-ink-dim transition-colors duration-200 hover:text-ink sm:inline">
+                Analytics
+              </Link>
               <Link href="/account" className="nav-link hidden text-ink-dim transition-colors duration-200 hover:text-ink sm:inline">
                 Account
               </Link>

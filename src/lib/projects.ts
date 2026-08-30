@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { categories, categoryGroups } from "@/data/categories";
 
 export const PAGE_SIZE = 24;
 
@@ -33,6 +34,59 @@ function publishedWhere(category?: string) {
 
 export async function getPublishedCount() {
   return prisma.project.count({ where: { status: "published" } });
+}
+
+export type CategoryCount = {
+  slug: string;
+  label: string;
+  count: number;
+};
+
+export type CategoryGroupCount = {
+  group: string;
+  total: number;
+  items: CategoryCount[];
+};
+
+export async function getPublishedCountsByCategory(): Promise<{
+  total: number;
+  groups: CategoryGroupCount[];
+  unknown: CategoryCount[];
+}> {
+  const [total, rows] = await Promise.all([
+    getPublishedCount(),
+    prisma.project.groupBy({
+      by: ["category"],
+      where: { status: "published" },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const counts = new Map(rows.map((row) => [row.category, row._count._all]));
+  const knownSlugs = new Set<string>(categories.map((category) => category.slug));
+
+  const groups = categoryGroups().map(({ group, items }) => {
+    const categoryItems = items.map(({ slug, label }) => ({
+      slug,
+      label,
+      count: counts.get(slug) ?? 0,
+    }));
+    return {
+      group,
+      total: categoryItems.reduce((sum, item) => sum + item.count, 0),
+      items: categoryItems,
+    };
+  });
+
+  const unknown = rows
+    .filter((row) => !knownSlugs.has(row.category))
+    .map((row) => ({
+      slug: row.category,
+      label: row.category,
+      count: row._count._all,
+    }));
+
+  return { total, groups, unknown };
 }
 
 export async function getProjectBySlug(slug: string) {

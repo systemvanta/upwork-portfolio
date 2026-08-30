@@ -186,13 +186,10 @@ function DemoLightbox({
   onClose: () => void;
   onChange: (index: number) => void;
 }) {
-  const item = items[index];
   const total = items.length;
   const canMove = total > 1;
-  const [direction, setDirection] = useState<"next" | "prev" | "enter">("enter");
 
   function go(delta: number) {
-    setDirection(delta > 0 ? "next" : "prev");
     onChange((index + delta + total) % total);
   }
 
@@ -203,14 +200,8 @@ function DemoLightbox({
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
       if (total < 2) return;
-      if (event.key === "ArrowRight") {
-        setDirection("next");
-        onChange((index + 1) % total);
-      }
-      if (event.key === "ArrowLeft") {
-        setDirection("prev");
-        onChange((index - 1 + total) % total);
-      }
+      if (event.key === "ArrowRight") go(1);
+      if (event.key === "ArrowLeft") go(-1);
     }
 
     window.addEventListener("keydown", onKey);
@@ -220,6 +211,7 @@ function DemoLightbox({
     };
   }, [index, total, onClose, onChange]);
 
+  const item = items[index];
   if (!item) return null;
 
   return createPortal(
@@ -233,21 +225,37 @@ function DemoLightbox({
         </button>
       </div>
       {canMove ? (
-        <button type="button" className="demo-lightbox-nav demo-lightbox-prev" onClick={() => go(-1)}>
+        <button
+          type="button"
+          className="demo-lightbox-nav demo-lightbox-prev"
+          onClick={() => go(-1)}
+          aria-label="Previous demo"
+        >
           Previous
         </button>
       ) : null}
       <div className="demo-lightbox-stage">
         <div
-          key={`${item.id}-${index}`}
-          className={`demo-lightbox-pane demo-lightbox-pane--${direction}`}
+          className="demo-lightbox-track"
+          style={{ transform: `translateX(-${index * 100}%)` }}
         >
-          <DemoFrame item={item} full />
-          {item.caption ? <p className="demo-lightbox-caption">{item.caption}</p> : null}
+          {items.map((slide, slideIndex) => (
+            <div key={slide.id} className="demo-lightbox-slide">
+              <DemoFrame item={slide} full={slideIndex === index} />
+              {slide.caption ? (
+                <p className="demo-lightbox-caption">{slide.caption}</p>
+              ) : null}
+            </div>
+          ))}
         </div>
       </div>
       {canMove ? (
-        <button type="button" className="demo-lightbox-nav demo-lightbox-next" onClick={() => go(1)}>
+        <button
+          type="button"
+          className="demo-lightbox-nav demo-lightbox-next"
+          onClick={() => go(1)}
+          aria-label="Next demo"
+        >
           Next
         </button>
       ) : null}
