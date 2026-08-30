@@ -54,7 +54,7 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
       <div>
         <input type="hidden" name={name} value={skills.join(",")} />
         <div
-          className={`field !mt-0 flex h-12 min-h-12 items-center gap-2 overflow-x-auto !py-0 ${className}`.trim()}
+          className={`field skill-input !mt-0 flex min-h-[52px] flex-wrap items-center gap-2 !rounded-[22px] !py-2 ${className}`.trim()}
         >
           {skills.map((skill) => (
             <button
@@ -80,7 +80,7 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
             }}
             onBlur={addDraft}
             placeholder={skills.length ? "" : placeholder}
-            className="h-full min-w-[8rem] flex-1 bg-transparent py-0 text-sm leading-none outline-none"
+            className="min-h-[28px] min-w-[8rem] flex-[1_1_8rem] bg-transparent py-1 text-sm leading-normal outline-none"
           />
         </div>
       </div>

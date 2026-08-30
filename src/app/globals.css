@@ -506,6 +506,10 @@ select.field {
   appearance: none;
 }
 
+.skill-input {
+  height: auto;
+}
+
 .field:hover {
   border-color: #1f1e1e;
 }
@@ -1421,6 +1425,62 @@ select.field {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.demo-lightbox-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  will-change: transform, opacity;
+}
+
+.demo-lightbox-pane--enter {
+  animation: lightbox-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.demo-lightbox-pane--next {
+  animation: lightbox-next 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.demo-lightbox-pane--prev {
+  animation: lightbox-prev 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes lightbox-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lightbox-next {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes lightbox-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .demo-lightbox-media {
@@ -1549,7 +1609,11 @@ video.demo-lightbox-media {
   .live-dot,
   .panel-in,
   .btn.is-busy,
-  .site-mark-lg {
+  .site-mark-lg,
+  .demo-lightbox-pane,
+  .demo-lightbox-pane--enter,
+  .demo-lightbox-pane--next,
+  .demo-lightbox-pane--prev {
     animation: none !important;
   }
 

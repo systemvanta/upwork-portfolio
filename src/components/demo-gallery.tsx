@@ -189,8 +189,10 @@ function DemoLightbox({
   const item = items[index];
   const total = items.length;
   const canMove = total > 1;
+  const [direction, setDirection] = useState<"next" | "prev" | "enter">("enter");
 
   function go(delta: number) {
+    setDirection(delta > 0 ? "next" : "prev");
     onChange((index + delta + total) % total);
   }
 
@@ -201,8 +203,14 @@ function DemoLightbox({
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
       if (total < 2) return;
-      if (event.key === "ArrowRight") onChange((index + 1) % total);
-      if (event.key === "ArrowLeft") onChange((index - 1 + total) % total);
+      if (event.key === "ArrowRight") {
+        setDirection("next");
+        onChange((index + 1) % total);
+      }
+      if (event.key === "ArrowLeft") {
+        setDirection("prev");
+        onChange((index - 1 + total) % total);
+      }
     }
 
     window.addEventListener("keydown", onKey);
@@ -230,8 +238,13 @@ function DemoLightbox({
         </button>
       ) : null}
       <div className="demo-lightbox-stage">
-        <DemoFrame key={item.id} item={item} full />
-        {item.caption ? <p className="demo-lightbox-caption">{item.caption}</p> : null}
+        <div
+          key={`${item.id}-${index}`}
+          className={`demo-lightbox-pane demo-lightbox-pane--${direction}`}
+        >
+          <DemoFrame item={item} full />
+          {item.caption ? <p className="demo-lightbox-caption">{item.caption}</p> : null}
+        </div>
       </div>
       {canMove ? (
         <button type="button" className="demo-lightbox-nav demo-lightbox-next" onClick={() => go(1)}>
