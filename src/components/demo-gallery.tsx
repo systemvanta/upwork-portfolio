@@ -218,20 +218,29 @@ function DemoLightbox({
     <div className="demo-lightbox" role="dialog" aria-modal="true" aria-label="Demo preview">
       <div className="demo-lightbox-bar">
         <p className="demo-lightbox-count">
-          {canMove ? `${index + 1} / ${total}` : "Preview"}
+          {canMove ? (
+            <>
+              <span className="demo-lightbox-count-num">{index + 1}</span>
+              <span className="demo-lightbox-count-sep">/</span>
+              <span>{total}</span>
+            </>
+          ) : (
+            "Preview"
+          )}
         </p>
-        <button type="button" className="demo-lightbox-close" onClick={onClose}>
-          Close
+        <button type="button" className="demo-lightbox-close demo-lightbox-ctrl" onClick={onClose}>
+          <LightboxIconClose />
+          <span>Close</span>
         </button>
       </div>
       {canMove ? (
         <button
           type="button"
-          className="demo-lightbox-nav demo-lightbox-prev"
+          className="demo-lightbox-nav demo-lightbox-prev demo-lightbox-ctrl"
           onClick={() => go(-1)}
           aria-label="Previous demo"
         >
-          Previous
+          <LightboxIconPrev />
         </button>
       ) : null}
       <div className="demo-lightbox-stage">
@@ -252,11 +261,11 @@ function DemoLightbox({
       {canMove ? (
         <button
           type="button"
-          className="demo-lightbox-nav demo-lightbox-next"
+          className="demo-lightbox-nav demo-lightbox-next demo-lightbox-ctrl"
           onClick={() => go(1)}
           aria-label="Next demo"
         >
-          Next
+          <LightboxIconNext />
         </button>
       ) : null}
     </div>,
@@ -332,5 +341,49 @@ function DemoImage({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} className={className} loading={loading} onError={onError} />
+  );
+}
+
+function LightboxIconPrev() {
+  return (
+    <svg viewBox="0 0 24 24" className="demo-lightbox-icon" aria-hidden>
+      <path
+        d="M15 6l-6 6 6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LightboxIconNext() {
+  return (
+    <svg viewBox="0 0 24 24" className="demo-lightbox-icon" aria-hidden>
+      <path
+        d="M9 6l6 6-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LightboxIconClose() {
+  return (
+    <svg viewBox="0 0 24 24" className="demo-lightbox-icon demo-lightbox-icon-close" aria-hidden>
+      <path
+        d="M6 6l12 12M18 6L6 18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
