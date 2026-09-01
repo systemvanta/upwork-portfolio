@@ -14,24 +14,36 @@ export type SkillInputHandle = {
   flush: () => string[];
 };
 
+const SKILL_DELIMITER = /[,;|，、·•\n\r\t]+/;
+
 function uniqueSkills(next: string[]) {
   return [...new Set(next.map((skill) => skill.trim()).filter(Boolean))];
 }
 
-function splitSkillDraft(value: string) {
+function normalizeSkillToken(skill: string) {
+  return skill
+    .replace(/^[\s•·▪‣\-–—*]+/, "")
+    .replace(/^\d+[\.)]\s*/, "")
+    .trim();
+}
+
+export function splitSkillText(value: string) {
   return value
-    .split(/[,;|\n\r\t]+/)
-    .map((skill) => skill.trim())
+    .split(SKILL_DELIMITER)
+    .map(normalizeSkillToken)
     .filter(Boolean);
 }
 
-function hasSkillDelimiter(value: string) {
-  return /[,;|\n\r\t]/.test(value);
+function shouldSplitSkillText(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (SKILL_DELIMITER.test(trimmed)) return true;
+  return trimmed.includes("\n") || trimmed.includes("\r");
 }
 
 function appendSkillText(current: string[], text: string) {
   if (!text.trim()) return current;
-  return uniqueSkills([...current, ...splitSkillDraft(text)]);
+  return uniqueSkills([...current, ...splitSkillText(text)]);
 }
 
 export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
@@ -63,11 +75,21 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
     }
 
     function ingestDraft(value: string) {
-      if (!hasSkillDelimiter(value)) {
+      if (!shouldSplitSkillText(value)) {
         setDraft(value);
         return;
       }
       commit(appendSkillText(skills, value));
+      setDraft("");
+    }
+
+    function ingestPastedText(pasted: string) {
+      const combined = `${draft}${pasted}`;
+      if (!shouldSplitSkillText(combined)) {
+        setDraft(combined);
+        return;
+      }
+      commit(appendSkillText(skills, combined));
       setDraft("");
     }
 
@@ -95,11 +117,12 @@ export const SkillInput = forwardRef<SkillInputHandle, SkillInputProps>(
             value={draft}
             onChange={(event) => ingestDraft(event.target.value)}
             onPaste={(event) => {
-              const text = event.clipboardData.getData("text");
-              if (!hasSkillDelimiter(text)) return;
+              const pasted =
+                event.clipboardData.getData("text/plain") ||
+                event.clipboardData.getData("text");
+              if (!pasted) return;
               event.preventDefault();
-              commit(appendSkillText(skills, text));
-              setDraft("");
+              ingestPastedText(pasted);
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === ",") {
