@@ -57,29 +57,19 @@ async function syncProjectMedia(
   formData: FormData,
   existing: { id: string; src: string; sortOrder: number }[],
 ) {
-  const keepIds = new Set(parseKeepMediaIds(formData));
+  const keepOrder = parseKeepMediaIds(formData);
+  const keepIds = new Set(keepOrder);
   const files = parseDemoFiles(formData);
   const urls = parseDemoUrls(formData);
-  const kept = existing.filter((item) => keepIds.has(item.id));
+  const kept = keepOrder
+    .map((id) => existing.find((item) => item.id === id))
+    .filter((item): item is { id: string; src: string; sortOrder: number } => Boolean(item));
 
   if (kept.length + files.length + urls.length < 1) {
     const liveUrl = String(formData.get("liveUrl") ?? "").trim();
     if (!liveUrl) {
       throw new Error("Add at least one demo picture or video.");
     }
-  }
-
-  let sortOrder = kept.reduce((max, item) => Math.max(max, item.sortOrder), -1);
-  const rows: { kind: string; src: string; sortOrder: number }[] = [];
-
-  for (const file of files) {
-    const saved = await saveUploadFile(projectId, file);
-    sortOrder += 1;
-    rows.push({ ...saved, sortOrder });
-  }
-  for (const url of urls) {
-    sortOrder += 1;
-    rows.push({ ...url, sortOrder });
   }
 
   const removed = existing.filter((item) => !keepIds.has(item.id));
@@ -90,6 +80,28 @@ async function syncProjectMedia(
     await prisma.projectMedia.deleteMany({
       where: { id: { in: removed.map((item) => item.id) } },
     });
+  }
+
+  await Promise.all(
+    kept.map((item, index) =>
+      prisma.projectMedia.update({
+        where: { id: item.id },
+        data: { sortOrder: index },
+      }),
+    ),
+  );
+
+  let sortOrder = kept.length - 1;
+  const rows: { kind: string; src: string; sortOrder: number }[] = [];
+
+  for (const file of files) {
+    const saved = await saveUploadFile(projectId, file);
+    sortOrder += 1;
+    rows.push({ ...saved, sortOrder });
+  }
+  for (const url of urls) {
+    sortOrder += 1;
+    rows.push({ ...url, sortOrder });
   }
 
   if (rows.length > 0) {

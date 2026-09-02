@@ -568,6 +568,135 @@ select.field {
   font-weight: 500;
 }
 
+.media-order-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .media-order-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.media-order-card {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0.75rem;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--fill);
+}
+
+.media-order-card.is-removed {
+  opacity: 0.45;
+}
+
+.media-order-thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--elevated);
+}
+
+.media-order-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-order-thumb span:not(.media-order-badge) {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  font-size: 12px;
+  color: var(--mist);
+}
+
+.media-order-badge {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.45rem;
+  display: grid;
+  place-items: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 9999px;
+  padding: 0 0.35rem;
+  background: rgba(31, 30, 30, 0.88);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.media-order-meta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem 0.65rem 0;
+}
+
+.media-order-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-dim);
+}
+
+.media-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.media-order-btn {
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 9999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.media-order-btn:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.media-order-btn:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.media-order-link {
+  cursor: pointer;
+  margin-left: 0.15rem;
+  border: 0;
+  background: transparent;
+  color: var(--brass);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.media-order-link:hover {
+  text-decoration: underline;
+}
+
 .btn {
   position: relative;
   overflow: hidden;
